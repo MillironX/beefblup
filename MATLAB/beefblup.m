@@ -30,3 +30,21 @@ data = sortrows(data,2);
 % certain id
 ids = data(:,1);
 animalrow = @(id) find(ids == id);
+numanimals = length(ids);
+
+% Store column numbers that need to be deleted
+colstodelete = 6;
+
+% Coerce each group to string format
+for i = 7:length(headers)
+   data(:,i) = cellfun(@num2str, data(:,i), 'UniformOutput', false); 
+end
+
+% Find any columns that need to be deleted
+for i = 7:length(headers)
+    if length(unique(data(:,i))) <= 1
+        colname = headers{i};
+        disp(['Column "' colname '" does not have any unique animals and will be removed from this analysis.']);
+        colstodelete = [colstodelete i]; 
+    end
+end
