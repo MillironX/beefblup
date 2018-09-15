@@ -33,6 +33,8 @@ animalrow = @(id) find(ids == id);
 numanimals = length(ids);
 
 % Store column numbers that need to be deleted
+% Column 6 contains an intermediate Excel calculation and always needs to
+% be deleted
 colstodelete = 6;
 
 % Coerce each group to string format
@@ -48,3 +50,20 @@ for i = 7:length(headers)
         colstodelete = [colstodelete i]; 
     end
 end
+
+% Delete the appropriate columns from the datasheet and the headers
+data(:,colstodelete) = [];
+headers(colstodelete) = [];
+
+% Determine how many contemporary groups there are
+numgroups = ones(1, length(headers)-5);
+for i = 6:length(headers)
+    numgroups(i) = length(unique(data(:,i)));
+end
+
+% If there are more groups than animals, then the analysis cannot continue
+if sum(numgroups) >= numanimals
+   disp('There are more contemporary groups than animals. The analysis will now abort.');
+   return
+end
+
