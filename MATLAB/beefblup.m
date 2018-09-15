@@ -44,7 +44,7 @@ end
 
 % Find any columns that need to be deleted
 for i = 7:length(headers)
-    if length(unique(data(:,i))) <= 1
+    if length(uniquecell(data(:,i))) <= 1
         colname = headers{i};
         disp(['Column "' colname '" does not have any unique animals and will be removed from this analysis.']);
         colstodelete = [colstodelete i]; 
@@ -58,7 +58,7 @@ headers(colstodelete) = [];
 % Determine how many contemporary groups there are
 numgroups = ones(1, length(headers)-5);
 for i = 6:length(headers)
-    numgroups(i) = length(unique(data(:,i)));
+    numgroups(i-5) = length(uniquecell(data(:,i)));
 end
 
 % If there are more groups than animals, then the analysis cannot continue
