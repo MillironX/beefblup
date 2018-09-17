@@ -91,3 +91,17 @@ disp(' ')
 disp('If no animal matching this description exists, the results may appear')
 disp('outlandish, but are still as correct as the accuracy suggests')
 disp(' ')
+
+% Form the fixed effect matrix
+X = zeros(numanimals, sum(numgroups)-length(numgroups)+1);
+X(:,1) = ones(1, numanimals);
+
+% Iterate through each group
+for i = 1:length(normal)
+    % Find the traits that are present in this trait
+    traits = uniquecell(data(:,i+5));
+    
+    % Remove the "normal" version from the analysis
+    normalindex = find(strcmp(traits, normal{i}));
+    traits(normalindex)  = [];
+end
