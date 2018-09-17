@@ -67,3 +67,14 @@ if sum(numgroups) >= numanimals
    return
 end
 
+% Define a "normal" animal as one of the last in the groups, provided that
+% all traits do not have null values
+normal = cell([1 length(headers)-5]);
+for i = 6:length(headers)
+   for j = numanimals:-1:1
+      if not(cellfun(@isempty, data(j,i)))
+         normal(i - 5) = data(j,i);
+         continue
+      end
+   end
+end
