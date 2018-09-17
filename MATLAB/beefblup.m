@@ -46,7 +46,8 @@ end
 for i = 7:length(headers)
     if length(uniquecell(data(:,i))) <= 1
         colname = headers{i};
-        disp(['Column "' colname '" does not have any unique animals and will be removed from this analysis.']);
+        disp(['Column "' colname '" does not have any unique animals and will be removed'])
+        disp('from this analysis');
         colstodelete = [colstodelete i]; 
     end
 end
@@ -74,7 +75,19 @@ for i = 6:length(headers)
    for j = numanimals:-1:1
       if not(cellfun(@isempty, data(j,i)))
          normal(i - 5) = data(j,i);
-         continue
+         break
       end
    end
 end
+
+% Print the results of the "normal" definition
+disp(' ')
+disp('For the purposes of this analysis, a "normal" animal will be defined')
+disp('by the following traits:')
+for i = 6:length(headers)
+    disp([headers{i} ': ' normal{i-5}])
+end
+disp(' ')
+disp('If no animal matching this description exists, the results may appear')
+disp('outlandish, but are still as correct as the accuracy suggests')
+disp(' ')
