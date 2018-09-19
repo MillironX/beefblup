@@ -96,6 +96,9 @@ disp(' ')
 X = zeros(numanimals, sum(numgroups)-length(numgroups)+1);
 X(:,1) = ones(1, numanimals);
 
+% Create an external counter that will increment through both loops
+I = 2;
+
 % Iterate through each group
 for i = 1:length(normal)
     % Find the traits that are present in this trait
@@ -104,4 +107,11 @@ for i = 1:length(normal)
     % Remove the "normal" version from the analysis
     normalindex = find(strcmp(traits, normal{i}));
     traits(normalindex)  = [];
+    
+    % Iterate inside of the group
+    for j = 1:length(traits)
+        matchedindex = find(strcmp(data(:,i+5), traits{j}));
+        X(matchedindex, I) = 1;
+        I = I + 1;
+    end
 end
