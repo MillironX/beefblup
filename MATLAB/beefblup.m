@@ -28,8 +28,8 @@ data = sortrows(data,2);
 
 % Create a lookup lambda function to find the animal represented by a
 % certain id
-ids = data(:,1);
-animalrow = @(id) find(ids == id);
+animalrow = @(id) find(strcmp(data(:,1), id));
+ids = [data{:,1}];
 numanimals = length(ids);
 
 % Store column numbers that need to be deleted
@@ -115,3 +115,6 @@ for i = 1:length(normal)
         I = I + 1;
     end
 end
+
+% Create an empty matrix for the additive relationship matrix
+A = sparse(numanimals, numanimals);
