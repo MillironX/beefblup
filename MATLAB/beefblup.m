@@ -26,11 +26,15 @@ data(:,2) = num2cell(datenum(data(:,2)));
 % Sort the array by date
 data = sortrows(data,2);
 
+% Coerce all id fields to string format
+strings = [1 3 4];
+data(:,strings) = cellfun(@num2str, data(:,strings), 'UniformOutput', false);
+
 % Create a lookup lambda function to find the animal represented by a
 % certain id
 animalrow = @(id) find(strcmp(data(:,1), id));
 ids = [data{:,1}];
-numanimals = length(ids);
+numanimals = length(data(:,1));
 
 % Store column numbers that need to be deleted
 % Column 6 contains an intermediate Excel calculation and always needs to
@@ -118,3 +122,45 @@ end
 
 % Create an empty matrix for the additive relationship matrix
 A = sparse(numanimals, numanimals);
+
+% Create lambdas to find sire and dam of each animal
+dam = @(id) [data{animalrow(num2str(id)), 3}];
+sire = @(id) [data{animalrow(num2str(id)), 4}];
+
+% Create the additive relationship matrix by the FORTRAN method presented
+% by Henderson
+for i = 1:numanimals
+   if strcmp(sire(i), 'NaN') && strcmp(dam(i), 'NaN')
+       for j = 1:(i-1)
+          A(j,i) = 0; 
+       end
+       A(i,i) = 1;
+       continue
+   end
+   
+   if strcmp(sire(i), 'NaN') && not(strcmp(dam(i), 'NaN'))
+       for j = 1:(i-1)
+           A(j,i) = A(j,str2double(dam(i)));
+           A(i,j) = A(j,str2double(dam(i)));
+       end
+       A(i,i) = 1;
+       continue
+   end
+   
+   if strcmp(dam(i), 'NaN') && not(strcmp(sire(i), 'NaN'))
+       for j=1:(i-1)
+           A(j,i) = A(j,str2double(sire(i)));
+           A(i,j) = A(j,str2double(sire(i)));
+       end
+       A(i,i) = 1;
+       continue
+   end
+   
+   for j=1:(i-1)
+       A(j,i) = 0.5.*(A(j,str2double(sire(i))) + A(j,str2double(dam(i))));
+       A(i,j) = 0.5.*(A(j,str2double(sire(i))) + A(j,str2double(dam(i))));
+   end
+   A(i,i) = 1 + 0.5.*A(str2double(sire(i)), str2double(dam(i)));
+   continue
+     
+end
