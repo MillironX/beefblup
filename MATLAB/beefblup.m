@@ -164,3 +164,20 @@ for i = 1:numanimals
    continue
      
 end
+
+% Extract the observed data
+Y = data{:, 5};
+
+% The identity matrix for random effects
+Z = speye(numanimals, numanimals);
+
+% Prompt for heritablity
+h2 = str2double(input('What is the heritablity for this trait? >> '));
+lambda = (1-h2)/h2;
+
+% Use the mixed-model equations
+solutions = [X'*X X'*Z; Z'*X (Z'*Z)+(inv(A).*lambda)]\[X'*Y; Z'*Y];
+
+% Find the accuracies
+diaginv = diag(inv([X'*X X'*Z; Z'*X (Z'*Z)+(inv(A).*lambda)]));
+reliability = 1 - diaginv.*lambda;
