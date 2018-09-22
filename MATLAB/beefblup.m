@@ -121,7 +121,7 @@ for i = 1:length(normal)
 end
 
 % Create an empty matrix for the additive relationship matrix
-A = sparse(numanimals, numanimals);
+A = zeros(numanimals, numanimals);
 
 % Create lambdas to find sire and dam of each animal
 dam = @(id) [data{animalrow(num2str(id)), 3}];
@@ -166,13 +166,13 @@ for i = 1:numanimals
 end
 
 % Extract the observed data
-Y = data{:, 5};
+Y = cell2mat(data(:, 5));
 
 % The identity matrix for random effects
-Z = speye(numanimals, numanimals);
+Z = eye(numanimals, numanimals);
 
 % Prompt for heritablity
-h2 = str2double(input('What is the heritablity for this trait? >> '));
+h2 = input('What is the heritablity for this trait? >> ');
 lambda = (1-h2)/h2;
 
 % Use the mixed-model equations
