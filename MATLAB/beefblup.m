@@ -103,6 +103,9 @@ X(:,1) = ones(1, numanimals);
 % Create an external counter that will increment through both loops
 I = 2;
 
+% Store the traits in a string cell array
+adjustedtraits = cell(1, sum(numgroups)-length(numgroups));
+
 % Iterate through each group
 for i = 1:length(normal)
     % Find the traits that are present in this trait
@@ -116,6 +119,11 @@ for i = 1:length(normal)
     for j = 1:length(traits)
         matchedindex = find(strcmp(data(:,i+5), traits{j}));
         X(matchedindex, I) = 1;
+        
+        % Add this trait to the string
+        adjustedtraits(I - 1) = traits(j);
+        
+        % Increment the big counter
         I = I + 1;
     end
 end
@@ -181,3 +189,77 @@ solutions = [X'*X X'*Z; Z'*X (Z'*Z)+(inv(A).*lambda)]\[X'*Y; Z'*Y];
 % Find the accuracies
 diaginv = diag(inv([X'*X X'*Z; Z'*X (Z'*Z)+(inv(A).*lambda)]));
 reliability = 1 - diaginv.*lambda;
+
+% Ask the user for where they would like the file saved
+[savename, savepath, ~] = uiputfile('*.txt', 'Save your beefblup results', 'results');
+
+% Find how many traits we found BLUE for
+numgroups = numgroups - 1;
+
+% Start printing results to output
+fileID = fopen([savepath savename], 'w');
+fprintf(fileID, 'beefblup Results Report\n');
+fprintf(fileID, 'Produced using beefblup for MATLAB (');
+fprintf(fileID, '%s', 'https://github.com/millironx/beefblup');
+fprintf(fileID, ')\n\n');
+fprintf(fileID, 'Input:\t');
+fprintf(fileID, '%s', fullname);
+fprintf(fileID, '\nAnalysis performed:\t');
+fprintf(fileID, date);
+fprintf(fileID, '\nTrait examined:\t');
+fprintf(fileID, [headers{5}]);
+fprintf(fileID, '\n\n');
+
+% Print base population stats
+fprintf(fileID, 'Base Population:\n');
+for i = 1:length(numgroups)
+   fprintf(fileID, '\t');
+   fprintf(fileID, [headers{i+5}]);
+   fprintf(fileID, ':\t');
+   fprintf(fileID, [normal{i}]);
+   fprintf(fileID, '\n');
+end
+fprintf(fileID, '\tMean ');
+fprintf(fileID, [headers{5}]);
+fprintf(fileID, ':\t');
+fprintf(fileID, num2str(solutions(1)));
+fprintf(fileID, '\n\n');
+
+I = 2;
+
+% Contemporary group adjustments
+fprintf(fileID, 'Contemporary Group Effects:\n');
+for i = 1:length(numgroups)
+   fprintf(fileID, '\t');
+   fprintf(fileID, [headers{i+5}]);
+   fprintf(fileID, '\tEffect\tReliability\n');
+   for j = 1:numgroups(i)
+      fprintf(fileID, '\t');
+      fprintf(fileID, [adjustedtraits{I-1}]);
+      fprintf(fileID, '\t');
+      fprintf(fileID, num2str(solutions(I)));
+      fprintf(fileID, '\t');
+      fprintf(fileID, num2str(reliability(I)));
+      fprintf(fileID, '\n');
+      
+      I = I + 1;
+   end
+   fprintf(fileID, '\n');
+end
+fprintf(fileID, '\n');
+
+% Expected breeding values
+fprintf(fileID, 'Expected Breeding Values:\n');
+fprintf(fileID, '\tID\tEBV\tReliability\n');
+for i = 1:numanimals
+   fprintf(fileID, '\t');
+   fprintf(fileID, [data{i,1}]);
+   fprintf(fileID, '\t');
+   fprintf(fileID, num2str(solutions(i+I-1)));
+   fprintf(fileID, '\t');
+   fprintf(fileID, num2str(reliability(i+I-1)));
+   fprintf(fileID, '\n');
+end
+
+fprintf(fileID, '\n - END REPORT -');
+fclose(fileID);
