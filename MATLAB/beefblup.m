@@ -187,6 +187,10 @@ Y = cell2mat(data(:, 5));
 % The identity matrix for random effects
 Z = eye(numanimals, numanimals);
 
+% Remove items where there is no data
+nullobs = find(isnan(Y));
+Z(nullobs, nullobs) = 0;
+
 % Prompt for heritability
 h2 = input('What is the heritability for this trait? >> ');
 lambda = (1-h2)/h2;
