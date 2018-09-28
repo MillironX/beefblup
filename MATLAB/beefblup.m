@@ -32,7 +32,8 @@ data(:,strings) = cellfun(@num2str, data(:,strings), 'UniformOutput', false);
 
 % Create a lookup lambda function to find the animal represented by a
 % certain id
-animalrow = @(id) find(strcmp(data(:,1), id));
+animal2row = @(id) find(strcmp(data(:,1), id));
+row2animal = @(rownum) [data{rownum,1}];
 ids = [data{:,1}];
 numanimals = length(data(:,1));
 
@@ -132,13 +133,20 @@ end
 A = zeros(numanimals, numanimals);
 
 % Create lambdas to find sire and dam of each animal
-dam = @(id) [data{animalrow(num2str(id)), 3}];
-sire = @(id) [data{animalrow(num2str(id)), 4}];
+id2dam = @(id) [data{animal2row(num2str(id)), 3}];
+id2sire = @(id) [data{animal2row(num2str(id)), 4}];
+row2dam = @(rownum) [data{rownum, 3}];
+row2sire = @(rownum) [data{rownum, 4}];
+rowofdam = @(id) animal2row(id2dam(id));
+rowofsire = @(id) animal2row(id2sire(id));
+row2rowofdam = @(rownum) rowofdam(row2animal(rownum));
+row2rowofsire = @(rownum) rowofsire(row2animal(rownum));
 
 % Create the additive relationship matrix by the FORTRAN method presented
 % by Henderson
 for i = 1:numanimals
-   if strcmp(sire(i), 'NaN') && strcmp(dam(i), 'NaN')
+   id = row2animal(i);
+   if isempty(row2rowofsire(i)) && isempty(row2rowofdam(i))
        for j = 1:(i-1)
           A(j,i) = 0; 
        end
@@ -146,29 +154,29 @@ for i = 1:numanimals
        continue
    end
    
-   if strcmp(sire(i), 'NaN') && not(strcmp(dam(i), 'NaN'))
+   if isempty(row2rowofsire(i)) && not(isempty(row2dam(i)))
        for j = 1:(i-1)
-           A(j,i) = A(j,str2double(dam(i)));
-           A(i,j) = A(j,str2double(dam(i)));
+           A(j,i) = A(j,row2rowofdam(i));
+           A(i,j) = A(j,row2rowofdam(i));
        end
        A(i,i) = 1;
        continue
    end
    
-   if strcmp(dam(i), 'NaN') && not(strcmp(sire(i), 'NaN'))
+   if isempty(row2rowofdam(i)) && not(isempty(row2rowofsire(i)))
        for j=1:(i-1)
-           A(j,i) = A(j,str2double(sire(i)));
-           A(i,j) = A(j,str2double(sire(i)));
+           A(j,i) = A(j,row2rowofsire(i));
+           A(i,j) = A(j,row2rowofsire(i));
        end
        A(i,i) = 1;
        continue
    end
    
    for j=1:(i-1)
-       A(j,i) = 0.5.*(A(j,str2double(sire(i))) + A(j,str2double(dam(i))));
-       A(i,j) = 0.5.*(A(j,str2double(sire(i))) + A(j,str2double(dam(i))));
+       A(j,i) = 0.5.*(A(j,row2rowofsire(i)) + A(j,row2rowofdam(i)));
+       A(i,j) = 0.5.*(A(j,row2rowofsire(i)) + A(j,row2rowofdam(i)));
    end
-   A(i,i) = 1 + 0.5.*A(str2double(sire(i)), str2double(dam(i)));
+   A(i,i) = 1 + 0.5.*A(row2rowofsire(i), row2rowofdam(i));
    continue
      
 end
@@ -179,8 +187,8 @@ Y = cell2mat(data(:, 5));
 % The identity matrix for random effects
 Z = eye(numanimals, numanimals);
 
-% Prompt for heritablity
-h2 = input('What is the heritablity for this trait? >> ');
+% Prompt for heritability
+h2 = input('What is the heritability for this trait? >> ');
 lambda = (1-h2)/h2;
 
 % Use the mixed-model equations
