@@ -10,11 +10,42 @@ clear
 clc
 close all
 
-% Import data from a suitable spreadsheet
+%% Display stuff
+disp('beefblup v. 0.0.0.1')
+disp('(C) 2018 Thomas A. Christensen II')
+disp('https://github.com/millironx/beefblup')
+disp(' ')
+
+%% Prompt User
+% Ask for an input spreadsheet
 [name, path] = uigetfile('*.xlsx','Select a beefblup worksheet');
+
+% Ask for an ouput text file
+[savename, savepath, ~] = uiputfile('*.txt', 'Save your beefblup results', 'results');
+
+% Ask for heritability
+h2 = input('What is the heritability for this trait? >> ');
+
+
+%% Import input file
+tic
+disp(' ')
+disp('Importing Excel file...')
+
+% Import data from a suitable spreadsheet
 fullname = [path name];
 clear name path
 [~, ~, data] = xlsread(fullname);
+
+disp('Importing Excel file... Done!')
+toc
+disp(' ')
+
+%% Process input file
+tic
+disp(' ')
+disp('Processing and formatting data...')
+disp(' ')
 
 % Extract the headers into a separate array
 headers = data(1,:);
@@ -97,6 +128,15 @@ disp('If no animal matching this description exists, the results may appear')
 disp('outlandish, but are still as correct as the accuracy suggests')
 disp(' ')
 
+disp('Processing and formatting data... Done!')
+toc
+disp(' ')
+
+%% Create the fixed-effect matrix
+tic
+disp(' ')
+disp('Creating the fixed-effect matrix...')
+
 % Form the fixed effect matrix
 X = zeros(numanimals, sum(numgroups)-length(numgroups)+1);
 X(:,1) = ones(1, numanimals);
@@ -128,6 +168,15 @@ for i = 1:length(normal)
         I = I + 1;
     end
 end
+
+disp('Creating the fixed-effect matrix... Done!')
+toc
+disp(' ')
+
+%% Additive relationship matrix
+tic
+disp(' ')
+disp('Creating the additive relationship matrix...')
 
 % Create an empty matrix for the additive relationship matrix
 A = zeros(numanimals, numanimals);
@@ -181,6 +230,15 @@ for i = 1:numanimals
      
 end
 
+disp('Creating the additive relationship matrix... Done!')
+toc
+disp(' ')
+
+%% Perform BLUP
+tic
+disp(' ')
+disp('Solving the mixed-model equations')
+
 % Extract the observed data
 Y = cell2mat(data(:, 5));
 
@@ -191,8 +249,7 @@ Z = eye(numanimals, numanimals);
 nullobs = find(isnan(Y));
 Z(nullobs, nullobs) = 0;
 
-% Prompt for heritability
-h2 = input('What is the heritability for this trait? >> ');
+% Calculate heritability
 lambda = (1-h2)/h2;
 
 % Use the mixed-model equations
@@ -202,8 +259,14 @@ solutions = [X'*X X'*Z; Z'*X (Z'*Z)+(inv(A).*lambda)]\[X'*Y; Z'*Y];
 diaginv = diag(inv([X'*X X'*Z; Z'*X (Z'*Z)+(inv(A).*lambda)]));
 reliability = 1 - diaginv.*lambda;
 
-% Ask the user for where they would like the file saved
-[savename, savepath, ~] = uiputfile('*.txt', 'Save your beefblup results', 'results');
+disp('Solving the mixed-model equations... Done!')
+toc
+disp(' ')
+
+%% Output the results
+tic
+disp(' ')
+disp('Saving results...')
 
 % Find how many traits we found BLUE for
 numgroups = numgroups - 1;
@@ -275,3 +338,7 @@ end
 
 fprintf(fileID, '\n - END REPORT -');
 fclose(fileID);
+
+disp('Saving results... Done!')
+toc
+disp(' ')
