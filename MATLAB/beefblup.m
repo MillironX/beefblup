@@ -61,12 +61,28 @@ data = sortrows(data,2);
 strings = [1 3 4];
 data(:,strings) = cellfun(@num2str, data(:,strings), 'UniformOutput', false);
 
-% Create a lookup lambda function to find the animal represented by a
-% certain id
-animal2row = @(id) find(strcmp(data(:,1), id));
-row2animal = @(rownum) [data{rownum,1}];
-ids = [data{:,1}];
+% Define fields to hold id values for animals and their parents
+ids = char(data{:,1});
+damids = char(data{:,3});
+sireids = char(data{:,4});
 numanimals = length(data(:,1));
+
+% Define fields to hold the index values for animals and their parents
+dam = zeros(numanimals,1);
+sire = zeros(numanimals,1);
+
+% Find all row numbers where an animal was a parent
+for i=1:numanimals
+   % Find all animals that this animal birthed
+   dammatch = ismember(damids, ids(i,:), 'rows');
+   damindexes = find(dammatch == 1);
+   dam(damindexes) = i;
+   
+   % Find all animals that this animal sired
+   sirematch = ismember(sireids, ids(i,:), 'rows');
+   sireindexes = find(sirematch == 1);
+   sire(sireindexes) = i;
+end
 
 % Store column numbers that need to be deleted
 % Column 6 contains an intermediate Excel calculation and always needs to
@@ -181,53 +197,34 @@ disp('Creating the additive relationship matrix...')
 % Create an empty matrix for the additive relationship matrix
 A = zeros(numanimals, numanimals);
 
-% Create lambdas to find sire and dam of each animal
-id2dam = @(id) [data{animal2row(num2str(id)), 3}];
-id2sire = @(id) [data{animal2row(num2str(id)), 4}];
-row2dam = @(rownum) [data{rownum, 3}];
-row2sire = @(rownum) [data{rownum, 4}];
-rowofdam = @(id) animal2row(id2dam(id));
-rowofsire = @(id) animal2row(id2sire(id));
-row2rowofdam = @(rownum) rowofdam(row2animal(rownum));
-row2rowofsire = @(rownum) rowofsire(row2animal(rownum));
-
 % Create the additive relationship matrix by the FORTRAN method presented
 % by Henderson
 for i = 1:numanimals
-   id = row2animal(i);
-   if isempty(row2rowofsire(i)) && isempty(row2rowofdam(i))
+    if dam(i) ~= 0 && sire(i) ~= 0
        for j = 1:(i-1)
-          A(j,i) = 0; 
+          A(j,i) = 0.5*(A(j,sire(i))+A(j,dam(i)));
+          A(i,j) = A(j,i);
        end
-       A(i,i) = 1;
-       continue
-   end
-   
-   if isempty(row2rowofsire(i)) && not(isempty(row2dam(i)))
-       for j = 1:(i-1)
-           A(j,i) = A(j,row2rowofdam(i));
-           A(i,j) = A(j,row2rowofdam(i));
-       end
-       A(i,i) = 1;
-       continue
-   end
-   
-   if isempty(row2rowofdam(i)) && not(isempty(row2rowofsire(i)))
-       for j=1:(i-1)
-           A(j,i) = A(j,row2rowofsire(i));
-           A(i,j) = A(j,row2rowofsire(i));
-       end
-       A(i,i) = 1;
-       continue
-   end
-   
-   for j=1:(i-1)
-       A(j,i) = 0.5.*(A(j,row2rowofsire(i)) + A(j,row2rowofdam(i)));
-       A(i,j) = 0.5.*(A(j,row2rowofsire(i)) + A(j,row2rowofdam(i)));
-   end
-   A(i,i) = 1 + 0.5.*A(row2rowofsire(i), row2rowofdam(i));
-   continue
-     
+       A(i,i) = 1 + 0.5*A(sire(i),dam(i));
+    elseif dam(i) ~= 0 && sire(i) == 0
+        for j = 1:(i-1)
+           A(j,i) = 0.5*A(j,dam(i));
+           A(i,j) = A(j,i);
+        end
+        A(i,i) = 1;
+    elseif dam(i) == 0 && sire(i) ~=0
+        for j = 1:(i-1)
+           A(j,i) = 0.5*A(j,sire(i));
+           A(i,j) = A(j,i);
+        end
+        A(i,i) = 1;            
+    else
+        for j = 1:(i-1)
+           A(j,i) = 0;
+           A(i,j) = 0;
+        end
+        A(i,i) = 1;
+    end
 end
 
 disp('Creating the additive relationship matrix... Done!')
