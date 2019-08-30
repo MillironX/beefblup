@@ -198,3 +198,7 @@ venv.bak/
 .mypy_cache/
 .dmypy.json
 dmypy.json
+
+# Ignore results files
+Results.txt
+results.txt
