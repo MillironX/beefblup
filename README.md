@@ -11,8 +11,16 @@ MATLAB and Python scripts and Excel spreadsheets that can be used in conjunction
 1. Download the [Excel template](https://github.com/MillironX/beefblup/raw/master/Excel/Master%20BLUP%20Worksheet.xlsx)
 2. Place your data into the structure described by the spreadsheet
 3. If you wish to add more contemporary group traits to your analysis, replace or add them to the right of the Purple section
-4. Download the entire `MATLAB` folder, and set it as your current MATLAB directory
-5. Run `beefblup.m`
+4. Open MATLAB
+5. Enter the following lines in the command window:
+
+    ```
+    websave('beefblup.zip','https://github.com/MillironX/beefblup/archive/master.zip');
+    unzip('beefblup.zip');
+    cd beefblup-master/MATLAB
+    beefblup
+    ```
+    
 6. Select the spreadsheet file you just placed your data into
 7. Select a file that you would like to save your results to
 8. Breeding values and contemporary group adjustments will be outputted to the file you selected
