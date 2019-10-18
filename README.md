@@ -8,7 +8,7 @@ MATLAB and Python scripts and Excel spreadsheets that can be used in conjunction
 
 ## How to Use
 
-1. Choose a spreadsheet appropriate to the trait you want to analyze from the `Excel` folder, and save it to your hard drive
+1. Download the [Excel template](https://github.com/MillironX/beefblup/raw/master/Excel/Master%20BLUP%20Worksheet.xlsx)
 2. Place your data into the structure described by the spreadsheet
 3. If you wish to add more contemporary group traits to your analysis, replace or add them to the right of the Purple section
 4. Download the entire `MATLAB` folder, and set it as your current MATLAB directory
