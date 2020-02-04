@@ -10,3 +10,4 @@ using Pkg
 
 # Install requisite packages
 Pkg.add("XLSX")
+Pkg.add("Gtk")
