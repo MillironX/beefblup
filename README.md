@@ -1,8 +1,12 @@
 # [:cow:]: beefblup
 
-beefblup is an easy-to-use program for ranchers to calculate expected breeding
-values (EBVs) for their own beef cattle. Why? It's part of my effort to
+beefblup is a program for ranchers to calculate expected breeding
+values (EBVs) for their own beef cattle. It is intended to be usable by anyone
+without requiring any prior knowledge of computer programming or linear algebra.
+Why? It's part of my effort to
 **\#KeepEPDsReal**
+
+[:arrow_down_small:  Download beefblup](https://github.com/MillironX/beefblup/archive/master.zip)
 
 > **Notice:** beefblup for MATLAB and beefblup for Python are going away. I'm
 > going to make changes here soon that will break the MATLAB version of
@@ -24,7 +28,8 @@ values (EBVs) for their own beef cattle. Why? It's part of my effort to
    (Again)
 5. Type `choco install Julia -y` into PowerShell and press **Enter**
 6. Close PowerShell once Chocolatey has finished
-7. Download and unzip beefblup to somewhere you will remember it
+7. [Download beefblup](https://github.com/MillironX/beefblup/archive/master.zip)
+   and unzip it to somewhere you will remember it
 8. Hold down the **Shift** key, and **right-click** in a blank space in the
    "Julia" folder of beefblup
 9. Click **Open PowerShell window here"
@@ -37,9 +42,28 @@ worry about `cd` commands or editing your `%PATH%`. That's good, right?
 
 #### Mac
 
-I don't know. I can't afford one. If any of you super-privileged Apple snobs
-out there run beefblup, please add proper instructions here and submit a pull
-request.
+1. [Download and install Julia](https://julialang.org/downloads/)
+2. Open terminal.app, and run the following
+
+```bash
+curl https://github.com/MillironX/beefblup/archive/master.zip -o beefblup.zip
+unzip beefblup.zip
+rm beefblup.zip
+```
+
+3. Quit terminal.app
+4. Open julia.app, and run the following
+
+```julia
+cd("~/beefblup/beefblup-master/Julia")
+include("install.jl")
+```
+
+5. Quit julia.app
+
+I don't know if these are right, since I can't afford a Mac. If any of you
+super-privileged Apple snobs out there use beefblup, please add proper
+instructions here and submit a pull request.
 
 #### Debian/Ubuntu Linux
 
@@ -47,28 +71,76 @@ TODO: Add instructions here. This is slightly complicated since there is no
 Julia package in the main repositories, and I don't use Debian distros enough to
 know where to find a third-party repos
 
-#### Fedora Linux
+#### Fedora Linux (The best platform)
 
-TODO: Add instructions here. I have this info, but it's on the work computer.
+From a new terminal, run
 
-## How to Use
+```bash
+sudo dnf install julia -y
+wget https://github.com/MillironX/beefblup/archive/master.zip -O beefblup.zip
+unzip beefblup.zip
+rm beefblup.zip
+cd beefblup/beefblup-master/Julia
+julia install.jl
+exit
+```
 
-1. Choose a spreadsheet appropriate to the trait you want to analyze from the `Excel` folder, and save it to your hard drive
-2. Place your data into the structure described by the spreadsheet
-3. If you wish to add more contemporary group traits to your analysis, replace or add them to the right of the Purple section
-4. Open MATLAB
-5. Enter the following lines in the command window:
+#### Other Platforms
 
-    ```
-    websave('beefblup.zip','https://github.com/MillironX/beefblup/archive/master.zip');
-    unzip('beefblup.zip');
-    cd beefblup-master/MATLAB
-    beefblup
-    ```
+Seriously? If you're enough of a geek to be using something else, you can figure
+this out on your own.
 
-6. Select the spreadsheet file you just placed your data into
-7. Select a file that you would like to save your results to
-8. Breeding values and contemporary group adjustments will be outputted to the file you selected
+### How to Use
+
+> **Note:** beefblup and [Juno](https://junolab.org)/[Julia Pro](https://juliacomputing.com/products/juliapro.html) currently don't get along.
+> Although it's tempting to just open up beefblup in Juno and press the big play
+> button, it won't work. Follow these instructions until it's fixed. If you
+> don't know what Juno is: ignore this message.
+
+#### All platforms
+
+1. Download the [Excel template](https://github.com/MillironX/beefblup/raw/master/Excel/Master%20BLUP%20Worksheet.xlsx)
+2. Replace the sample data in the spreadsheet with your own
+3. If you wish to add more contemporary group traits to your analysis, replace
+   or add them to the right of the Purple section
+4. Save, and continue with your platform-specific instructions below
+
+#### Windows
+
+5. Remember where you downloaded beefblup to when you installed it
+6. Hold down the **Shift** key, and **right-click** in a blank space in the
+   "Julia" folder of beefblup
+7. Click **Open PowerShell window here"
+8. Type `julia beefblup.jl` into PowerShell and press **Enter**
+9. Select the spreadsheet you created in Step 4
+10. Follow the on-screen prompts
+11. **\#KeepEPDsReal!**
+
+#### Mac
+
+5. Open julia.app, and run the following
+
+```julia
+cd("~/beefblup/beefblup-master/Julia")
+include("beefblup.jl")
+```
+
+6. Select the spreadsheet you created in Step 4
+7. Follow the on-screen prompts
+8. **\#KeepEPDsReal!**
+
+#### All Linux
+
+5. Open a new terminal, and type
+
+```bash
+cd beefblup/beefblup-master/Julia
+julia beefblup.jl
+```
+
+6. Select the spreadsheet you created in Step 4
+7. Follow the on-screen prompts
+8. **\#KeepEPDsReal!**
 
 ## For Programmers
 
@@ -86,34 +158,24 @@ TODO: Add instructions here. I have this info, but it's on the work computer.
 | v0.8    | Maternal effects BLUP                                               |
 | v0.9    | Genomic BLUP                                                        |
 | v0.10   | beefblup binaries                                                   |
-| v1.0    | [Finally, RELEASE!!!](https://youtu.be/Zd-up5EgoMw?t=5049)                                                                    |
+| v1.0    | [Finally, RELEASE!!!](https://youtu.be/1CBjxGdgC1w?t=282)           |
 
-I will gladly take input on the following:
+### Bug Reports
 
-* Converting MATLAB scripts to Python
-* Optimizing code sections
-    * Use triagonal shortcuts to generate the additive relationship matrix
-    * Solve implicit forms of the mixed-model equation
-    * Perform cannonical transformations for missing values
-    * Other similar improvements that I might not be aware of
-* Creation of scripts to handle additional forms of BLUP
-    * Mult-trait (MBLUP)
-    * Maternal-trait
-    * Genomic-enhanced (GBLUP) - this will require the creation of a standard SNP spreadsheet format
-* Creation of spreadsheets for additional traits
-* Creation of wiki pages to explain what each script does
-    * The general rule is that **every** wiki page should be understandable to anyone who's passed high school algebra, while still being correct and informative
+For every bug report, please include at least the following:
 
+- Platform (Windows, Mac, Fedora, etc)
+- Julia version
+- beefblup version
+- How you are running Julia (From PowerShell, via the REPL, etc.)
+- A beefblup spreadsheet that can be used to recreate the issue
+- Description of the problem
+- Expected behavior
+- A screenshot and/or REPL printout
 
+### Feature and Pull Requests
 
-Note that I intend to implement all of the items above eventually, but progress is slow since I'm learning as I go.
-
-If you are writing code, please keep the code clean:
-
-* Run "Smart Indent" in the MATLAB editor on the entire file before checking it in
-* Name variables in full word English using all lowercase, unless the matrix name is generally agreed upon in academic papers (i.e. A is the additive relationship matrix)
-* For MATLAB, functions go in a separate file
-* Comments go before a code block: no inline comments
+Although I doubt there will be many contributors here,
 
 ## License
 
