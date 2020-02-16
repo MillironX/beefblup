@@ -2,7 +2,7 @@
 # Main script for performing single-variate BLUP to find beef cattle
 # breeding values
 # Usage: julia beefblup.jl
-# (C) 2019 Thomas A. Christensen II
+# (C) 2020 Thomas A. Christensen II
 # Licensed under BSD-3-Clause License
 
 # Import the required packages
@@ -12,8 +12,8 @@ using Dates
 using Gtk
 
 # Display stuff
-println("beefblup v 0.0.0.1")
-println("(C) 2019 Thomas A. Christensen II")
+println("beefblup v 0.1")
+println("(C) 2020 Thomas A. Christensen II")
 println("https://github.com/millironx/beefblup")
 print("\n")
 
