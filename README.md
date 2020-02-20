@@ -92,7 +92,7 @@ this out on your own.
 
 ### How to Use
 
-> **Note:** beefblup and [Juno](https://junolab.org)/[Julia Pro](https://juliacomputing.com/products/juliapro.html) currently don't get along.
+> **Note:** beefblup and [Juno](https://junolab.org)/[Julia Pro](https://juliacomputing.com/products/juliapro.html) currently [don't get along](https://github.com/JunoLab/Juno.jl/issues/118).
 > Although it's tempting to just open up beefblup in Juno and press the big play
 > button, it won't work. Follow these instructions until it's fixed. If you
 > don't know what Juno is: ignore this message.
@@ -143,6 +143,10 @@ julia beefblup.jl
 8. **\#KeepEPDsReal!**
 
 ## For Programmers
+
+> **Also Note:** beefblup was written on, and has only been tested with Julia
+> v1.2.0 and higher. While this shouldn't affect most everyday users, it might
+> affect you if you are stuck on the current LTS version of Julia (v1.0.5).
 
 ### Development Roadmap
 
