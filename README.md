@@ -1,5 +1,7 @@
 # beefblup
 
+[![Join the chat at https://gitter.im/beefblup/community](https://badges.gitter.im/beefblup/community.svg)](https://gitter.im/beefblup/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 :cow: :cow: :cow:
 
 #### \#KeepEPDsReal
