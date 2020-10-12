@@ -28,7 +28,7 @@ Julia.
 > don't know what Juno is: ignore this message.
 
 1. Download the [beefblup ZIP
-   file](https://github.com/MillironX/beefblup/archive/0.1.zip) and unzip it
+   file](https://github.com/MillironX/beefblup/archive/v0.1.zip) and unzip it
    someplace memorable
 2. Make a copy of the "Master BLUP Worksheet" and replace the sample data with your own
 3. If you wish to add more contemporary group traits to your analysis, replace
