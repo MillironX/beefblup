@@ -2,7 +2,7 @@
 % Main script for performing single-variate BLUP to find beef cattle
 % breeding values
 % Usage: beefblup
-% (C) 2018 Thomas A. Christensen II
+% (C) 2020 Thomas A. Christensen II
 % Licensed under BSD-3-Clause License
 
 % Prepare the workspace for computation
@@ -11,8 +11,8 @@ clc
 close all
 
 %% Display stuff
-disp('beefblup v. 0.0.0.1')
-disp('(C) 2018 Thomas A. Christensen II')
+disp('beefblup v. 0.1')
+disp('(C) 2020 Thomas A. Christensen II')
 disp('https://github.com/millironx/beefblup')
 disp(' ')
 
@@ -77,7 +77,7 @@ for i=1:numanimals
    dammatch = ismember(damids, ids(i,:), 'rows');
    damindexes = find(dammatch == 1);
    dam(damindexes) = i;
-   
+
    % Find all animals that this animal sired
    sirematch = ismember(sireids, ids(i,:), 'rows');
    sireindexes = find(sirematch == 1);
@@ -91,7 +91,7 @@ colstodelete = 6;
 
 % Coerce each group to string format
 for i = 7:length(headers)
-   data(:,i) = cellfun(@num2str, data(:,i), 'UniformOutput', false); 
+   data(:,i) = cellfun(@num2str, data(:,i), 'UniformOutput', false);
 end
 
 % Find any columns that need to be deleted
@@ -100,7 +100,7 @@ for i = 7:length(headers)
         colname = headers{i};
         disp(['Column "' colname '" does not have any unique animals and will be removed'])
         disp('from this analysis');
-        colstodelete = [colstodelete i]; 
+        colstodelete = [colstodelete i];
     end
 end
 
@@ -167,19 +167,19 @@ adjustedtraits = cell(1, sum(numgroups)-length(numgroups));
 for i = 1:length(normal)
     % Find the traits that are present in this trait
     traits = uniquecell(data(:,i+5));
-    
+
     % Remove the "normal" version from the analysis
     normalindex = find(strcmp(traits, normal{i}));
     traits(normalindex)  = [];
-    
+
     % Iterate inside of the group
     for j = 1:length(traits)
         matchedindex = find(strcmp(data(:,i+5), traits{j}));
         X(matchedindex, I) = 1;
-        
+
         % Add this trait to the string
         adjustedtraits(I - 1) = traits(j);
-        
+
         % Increment the big counter
         I = I + 1;
     end
@@ -217,7 +217,7 @@ for i = 1:numanimals
            A(j,i) = 0.5*A(j,sire(i));
            A(i,j) = A(j,i);
         end
-        A(i,i) = 1;            
+        A(i,i) = 1;
     else
         for j = 1:(i-1)
            A(j,i) = 0;
@@ -313,7 +313,7 @@ for i = 1:length(numgroups)
       fprintf(fileID, '\t');
       fprintf(fileID, num2str(reliability(I)));
       fprintf(fileID, '\n');
-      
+
       I = I + 1;
    end
    fprintf(fileID, '\n');
