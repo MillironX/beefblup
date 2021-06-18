@@ -48,6 +48,17 @@ beefblup(path, savepath, h2)
 
 end
 
+function beefblup(datafile::String, h2::Float64)
+    # Assume the data is named the same as the file without the trailing extension
+    dataname = split(datafile, ".")[1:end-1]
+
+    # Create a new results name
+    resultsfile = string(dataname, "_results.txt")
+
+    # Pass this info on to the worker
+    beefblup(datafile, resultsfile, h2)
+end
+
 # Main worker function, can perform all the work if given all the user input
 function beefblup(path::String, savepath::String, h2::Float64)
 
