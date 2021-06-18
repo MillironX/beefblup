@@ -13,35 +13,34 @@ Why? It's part of my effort to
 ## Installation
 
 1. [Download and install Julia](https://julialang.org/downloads/platform/)
-2. Open a new Julia window and type the `]` key
-3. Type `add XLSX Gtk` and press **Enter**
-
-Alternatively, you can run the [install
-script](https://github.com/MillironX/beefblup/raw/master/Julia/install.jl) from
-Julia.
+2. Download the [beefblup ZIP
+   file](https://github.com/MillironX/beefblup/archive/refs/tags/v0.2.zip) and unzip it   someplace memorable
+3. In your file explorer, copy the address of the "beefblup" folder
+4. Launch Julia
+5. Type `cd("<the address copied in step 5")` and press **Enter** (For example,
+   `cd("C:\Users\MillironX\Documents\beefblup")`)
+6. Type the `]` key
+7. Type `activate .` and press **Enter**
+8. Type `instantiate` and press **Enter**
+9. Installation is done: you can close the Julia window
 
 ## How to Use
 
-> **Note:** beefblup and [Juno](https://junolab.org)/[Julia Pro](https://juliacomputing.com/products/juliapro.html) currently [don't get along](https://github.com/JunoLab/Juno.jl/issues/118).
-> Although it's tempting to just open up beefblup in Juno and press the big play
-> button, it won't work. Follow these instructions until it's fixed. If you
-> don't know what Juno is: ignore this message.
-
-1. Download the [beefblup ZIP
-   file](https://github.com/MillironX/beefblup/archive/v0.1.zip) and unzip it
-   someplace memorable
-2. Make a copy of the "Master BLUP Worksheet" and replace the sample data with your own
-3. If you wish to add more contemporary group traits to your analysis, replace
-   or add them to the right of the Purple section
-4. Save and close
-5. In your file explorer, copy the address of the "Julia" folder
-6. Launch Julia
-7. Type `cd("<the address copied in step 5")` and press **Enter** (For example,
-   `cd("C:\Users\MillironX\Documents\beefblup\Julia")`)
-8. Type `include("beefblup.jl")` and press **Enter**
-9. Select the spreadsheet you created in steps 1-4
-10. Follow the on-screen prompts
-11. **#KeepEPDsReal!**
+1. Make a copy of the "sample.csv" spreadsheet and replace the data with your own
+   1. The trait you wish to calculate EBVs for always goes in the rightmost column
+   2. If you wish to add more contemporary group traits to your analysis, include them before the rightmost column
+2. Save and close
+3. In your file explorer, copy the address of the "beefblup" folder
+4. Launch Julia
+5. Type `cd("<the address copied in step 5")` and press **Enter** (For example,
+   `cd("C:\Users\MillironX\Documents\beefblup")`)
+6. Type the `]` key
+7. Type `activate .` and press **Enter**
+8. Press **Backspace**
+9. Type `include("src/beefblup.jl")` and press **Enter**
+10. Select the spreadsheet you created in steps 1-4
+11. Follow the on-screen prompts
+12. **#KeepEPDsReal!**
 
 ## For Programmers
 
@@ -51,19 +50,19 @@ Julia.
 
 ### Development Roadmap
 
-| Version | Feature                                                             |
-| ------- | ------------------------------------------------------------------- |
-| v0.1    | Julia port of original MATLAB script                                |
-| v0.2    | Spreadsheet format redesign                                         |
-| v0.3    | API rewrite (change to function calls and package format instead of script running)    |
-| v0.4    | Add GUI for all options                                             |
-| v0.5    | Automatically calculated Age-Of-Dam, Year, and Season fixed-effects |
-| v0.6    | Repeated measurement BLUP (aka dairyblup)                           |
-| v0.7    | Multiple trait BLUP                                                 |
-| v0.8    | Maternal effects BLUP                                               |
-| v0.9    | Genomic BLUP                                                        |
-| v0.10   | beefblup binaries                                                   |
-| v1.0    | [Finally, RELEASE!!!](https://youtu.be/1CBjxGdgC1w?t=282)           |
+| Version | Feature                                                                             | Status             |
+| ------- | ----------------------------------------------------------------------------------- | ------------------ |
+| v0.1    | Julia port of original MATLAB script                                                | :heavy_check_mark: |
+| v0.2    | Spreadsheet format redesign                                                         | :heavy_check_mark: |
+| v0.3    | API rewrite (change to function calls and package format instead of script running) |                    |
+| v0.4    | Add GUI for all options                                                             |                    |
+| v0.5    | Automatically calculated Age-Of-Dam, Year, and Season fixed-effects                 |                    |
+| v0.6    | Repeated measurement BLUP (aka dairyblup)                                           |                    |
+| v0.7    | Multiple trait BLUP                                                                 |                    |
+| v0.8    | Maternal effects BLUP                                                               |                    |
+| v0.9    | Genomic BLUP                                                                        |                    |
+| v0.10   | beefblup binaries                                                                   |                    |
+| v1.0    | [Finally, RELEASE!!!](https://youtu.be/1CBjxGdgC1w?t=282)                           |                    |
 
 ### Bug Reports
 
