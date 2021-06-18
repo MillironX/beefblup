@@ -1,0 +1,6 @@
+#!/bin/bash
+#=
+exec julia --project="$(realpath "$(dirname "${BASH_SOURCE[0]}")")" "${BASH_SOURCE[0]}" "$@"
+=#
+using BeefBLUP
+BeefBLUP.beefblup()
