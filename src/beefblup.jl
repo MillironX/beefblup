@@ -6,7 +6,8 @@
 # Licensed under BSD-3-Clause License
 
 # Import the required packages
-using XLSX
+using CSV
+using DataFrames
 using LinearAlgebra
 using Dates
 using Gtk
@@ -22,7 +23,7 @@ print("\n")
 path = open_dialog_native(
     "Select a beefblup worksheet",
     GtkNullContainer(),
-    ("*.xlsx", GtkFileFilter("*.xlsx", name="beefblup worksheet"))
+    ("*.csv", GtkFileFilter("*.csv", name="beefblup worksheet"))
 )
 
 # Ask for an output text filename
@@ -38,58 +39,45 @@ print("What is the heritability for this trait?> ")
 h2 = parse(Float64, readline(stdin))
 
 ### Import input filename
-print("[🐮]: Importing Excel file...")
+print("[🐮]: Importing data file...")
 
 # Import data from a suitable spreadsheet
-data = XLSX.readxlsx(path)[1][:]
+data = CSV.File(path) |> DataFrame
 
 print("Done!\n")
 
 ### Process input file
 print("[🐮]: Processing and formatting data...")
 
-# Extract the headers into a separate array
-headers = data[1,:]
-data = data[2:end,:]
-
 # Sort the array by date
-data = sortslices(data, dims=1, lt=(x,y)->isless(x[2],y[2]))
+sort!(data, :birthdate)
 
 # Define fields to hold id values for animals and their parents
-ids = string.(data[:,1])
-damids = string.(data[:,3])
-sireids = string.(data[:,4])
-numanimals = length(ids)
+numanimals = length(data.id)
 
 # Find the index values for animals and their parents
-dam = indexin(damids, ids)
-sire = indexin(sireids, ids)
+dam = indexin(data.dam, data.id)
+sire = indexin(data.sire, data.id)
 
-# Store column numbers that need to be deleted
-# Column 6 contains an intermediate Excel calculation and always need to
-# be deleted
-colstokeep = [1, 2, 3, 4, 5]
+# Extract all of the fixed effects
+fixedfx = select(data, Not([:id, :birthdate, :sire, :dam]))[:,1:end-1]
 
 # Find any columns that need to be deleted
-for i in 7:length(headers)
-    if length(unique(data[:,i])) <= 1
-        colname = headers[i]
+for i in 1:ncol(fixedfx)
+    if length(unique(fixedfx[:,i])) <= 1
+        colname = names(fixedfx)[i]
         print("Column '")
         print(colname)
         print("' does not have any unique animals and will be removed from this analysis\n")
-    else
-        push!(colstokeep, i)
+        deletecols!(fixedfx,i)
     end
 end
 
-# Delete the appropriate columns from the datasheet and the headers
-data = data[:, colstokeep]
-headers = headers[colstokeep]
-
 # Determine how many contemporary groups there are
-numgroups = ones(1, length(headers)-5)
-for i in 6:length(headers)
-    numgroups[i-5] = length(unique(data[:,i]))
+numtraits = ncol(fixedfx)
+numgroups = ones(1, numtraits)
+for i in 1:numtraits
+    numgroups[i] = length(unique(fixedfx[:,i]))
 end
 
 # If there are more groups than animals, then the analysis cannot continue
@@ -101,11 +89,11 @@ end
 
 # Define a "normal" animal as one of the last in the groups, provided that
 # all traits do not have null values
-normal = Array{String}(undef,1,length(headers)-5)
-for i in 6:length(headers)
+normal = Array{String}(undef,1,numtraits)
+for i in 1:numtraits
     for j in numanimals:-1:1
-        if !ismissing(data[j,i])
-            normal[i-5] = string(data[j,i])
+        if !ismissing(fixedfx[j,i])
+            normal[i] = string(fixedfx[j,i])
             break
         end
     end
@@ -129,12 +117,12 @@ Array{String}(undef,floor(Int,sum(numgroups))-length(numgroups))
 # Iterate through each group
 for i in 1:length(normal)
     # Find the traits that are present in this trait
-    localdata = string.(data[:,i+5])
+    localdata = string.(fixedfx[:,i])
     traits = unique(localdata)
     # Remove the normal version from the analysis
     effecttraits = traits[findall(x -> x != normal[i], traits)]
     # Iterate inside of the group
-    for j in 1:length(effecttraits)
+    for j in 1:(length(effecttraits) - 1)
             matchedindex = findall(x -> x != effecttraits[j], localdata)
             X[matchedindex, counter] .= 1
             # Add this trait to the string
@@ -188,7 +176,7 @@ print("Done!\n")
 print("[🐮]: Solving the mixed-model equations...")
 
 # Extract the observed data
-Y = convert(Array{Float64}, data[:,5])
+Y = convert(Array{Float64}, data[:,end])
 
 # The random effects matrix
 Z = Matrix{Int}(I, numanimals, numanimals)
@@ -273,7 +261,7 @@ write(fileID, "Expected Breeding Values:\n")
 write(fileID, "\tID\tEBV\tReliability\n")
 for i in 1:numanimals
     write(fileID, "\t")
-    write(fileID, ids[i])
+    write(fileID, data.id[i])
     write(fileID, "\t")
     write(fileID, string(solutions[i+counter-1]))
     write(fileID, "\t")
