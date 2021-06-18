@@ -1,3 +1,7 @@
+#!/bin/bash
+#=
+exec julia --project=$(realpath $(dirname $(dirname "${BASH_SOURCE[0]}"))) "${BASH_SOURCE[0]}" "$@"
+=#
 # beefblup
 # Main script for performing single-variate BLUP to find beef cattle
 # breeding values
