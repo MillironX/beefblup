@@ -18,12 +18,6 @@ using Gtk
 # Main entry-level function - acts just like the script
 function beefblup()
 
-# Display stuff
-println("beefblup v 0.2")
-println("(C) 2021 Thomas A. Christensen II")
-println("https://github.com/millironx/beefblup")
-print("\n")
-
 ### Prompt User
 # Ask for an input spreadsheet
 path = open_dialog_native(
@@ -62,16 +56,8 @@ end
 # Main worker function, can perform all the work if given all the user input
 function beefblup(path::String, savepath::String, h2::Float64)
 
-### Import input filename
-print("[🐮]: Importing data file...")
-
 # Import data from a suitable spreadsheet
 data = DataFrame(CSV.File(path))
-
-print("Done!\n")
-
-### Process input file
-print("[🐮]: Processing and formatting data...")
 
 # Sort the array by date
 sort!(data, :birthdate)
@@ -123,11 +109,6 @@ for i in 1:numtraits
     end
 end
 
-print("Done!\n")
-
-### Create the fixed-effect matrix
-print("[🐮]: Creating the fixed-effect matrix...")
-
 # Form the fixed-effect matrix
 X = zeros(Int8, numanimals, floor(Int,sum(numgroups))-length(numgroups)+1)
 X[:,1] = ones(Int8, 1, numanimals)
@@ -155,11 +136,6 @@ for i in 1:length(normal)
         counter = counter + 1
     end
 end
-
-print("Done!\n")
-
-### Additive relationship matrix
-print("[🐮]: Creating additive relationship matrix...")
 
 # Create an empty matrix for the additive relationship matrix
 A = zeros(numanimals, numanimals)
@@ -194,11 +170,6 @@ for i in 1:numanimals
     end
 end
 
-print("Done!\n")
-
-### Perform BLUP
-print("[🐮]: Solving the mixed-model equations...")
-
 # Extract the observed data
 Y = convert(Array{Float64}, data[:,end])
 
@@ -220,11 +191,6 @@ solutions = MME\MMY
 # Find the accuracies
 diaginv = diag(inv(MME))
 reliability = ones(Float64, length(diaginv)) - diaginv.*λ
-
-print("Done!\n")
-
-### Output the results
-print("[🐮]: Saving results...")
 
 # Find how many traits we found BLUE for
 numgroups = numgroups .- 1
@@ -299,8 +265,6 @@ end
 
 write(fileID, "\n - END REPORT -")
 close(fileID)
-
-print("Done!\n")
 
 
 end
