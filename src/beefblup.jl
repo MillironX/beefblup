@@ -211,6 +211,10 @@ print("[🐮]: Saving results...")
 # Find how many traits we found BLUE for
 numgroups = numgroups .- 1
 
+# Extract the names of the traits
+fixedfxnames = names(fixedfx)
+traitname = names(data)[end]
+
 # Start printing results to output
 fileID = open(savepath, "w")
 write(fileID, "beefblup Results Report\n")
@@ -222,20 +226,20 @@ write(fileID, path)
 write(fileID, "\nAnalysis performed:\t")
 write(fileID, string(Dates.today()))
 write(fileID, "\nTrait examined:\t")
-write(fileID, headers[5])
+write(fileID, traitname)
 write(fileID, "\n\n")
 
 # Print base population stats
 write(fileID, "Base Population:\n")
-for i in 1:length(numgroups)
+for i in 1:length(normal)
     write(fileID, "\t")
-    write(fileID, headers[i+5])
+    write(fileID, fixedfxnames[i])
     write(fileID, ":\t")
     write(fileID, normal[i])
     write(fileID, "\n")
 end
 write(fileID, "\tMean ")
-write(fileID, headers[5])
+write(fileID, traitname)
 write(fileID, ":\t")
 write(fileID, string(solutions[1]))
 write(fileID, "\n\n")
@@ -245,7 +249,7 @@ counter = 2
 write(fileID, "Contemporary Group Effects:\n")
 for i in 1:length(numgroups)
     write(fileID, "\t")
-    write(fileID, headers[i+5])
+    write(fileID, fixedfxnames[i])
     write(fileID, "\tEffect\tReliability\n")
     for j in 1:numgroups[i]
         write(fileID, "\t")
@@ -267,7 +271,7 @@ write(fileID, "Expected Breeding Values:\n")
 write(fileID, "\tID\tEBV\tReliability\n")
 for i in 1:numanimals
     write(fileID, "\t")
-    write(fileID, data.id[i])
+    write(fileID, string(data.id[i]))
     write(fileID, "\t")
     write(fileID, string(solutions[i+counter-1]))
     write(fileID, "\t")
