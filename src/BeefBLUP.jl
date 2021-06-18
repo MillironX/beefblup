@@ -1,15 +1,12 @@
-#!/bin/bash
-#=
-exec julia --project=$(realpath $(dirname $(dirname "${BASH_SOURCE[0]}"))) "${BASH_SOURCE[0]}" "$@"
-=#
 # beefblup
-# Main script for performing single-variate BLUP to find beef cattle
+# Julia package for performing single-variate BLUP to find beef cattle
 # breeding values
-# Usage: julia beefblup.jl
 # (C) 2021 Thomas A. Christensen II
 # Licensed under BSD-3-Clause License
 # cSpell:includeRegExp #.*
 # cSpell:includeRegExp ("""|''')[^\1]*\1
+
+module BeefBLUP
 
 # Import the required packages
 using CSV
@@ -17,6 +14,9 @@ using DataFrames
 using LinearAlgebra
 using Dates
 using Gtk
+
+# Main entry-level function - acts just like the script
+function beefblup()
 
 # Display stuff
 println("beefblup v 0.2")
@@ -134,7 +134,7 @@ for i in 1:length(normal)
             # Add this trait to the string
             adjustedtraits[counter - 1] = traits[j]
         # Increment the big counter
-        global counter = counter + 1
+        counter = counter + 1
     end
 end
 
@@ -260,7 +260,7 @@ for i in 1:length(numgroups)
         write(fileID, string(reliability[counter]))
         write(fileID, "\n")
 
-        global counter = counter + 1
+        counter = counter + 1
     end
     write(fileID, "\n")
 end
@@ -283,3 +283,7 @@ write(fileID, "\n - END REPORT -")
 close(fileID)
 
 print("Done!\n")
+
+
+end
+end
