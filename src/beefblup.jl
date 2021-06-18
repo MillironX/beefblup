@@ -8,6 +8,8 @@ exec julia --project=$(realpath $(dirname $(dirname "${BASH_SOURCE[0]}"))) "${BA
 # Usage: julia beefblup.jl
 # (C) 2020 Thomas A. Christensen II
 # Licensed under BSD-3-Clause License
+# cSpell:includeRegExp #.*
+# cSpell:includeRegExp ("""|''')[^\1]*\1
 
 # Import the required packages
 using CSV
