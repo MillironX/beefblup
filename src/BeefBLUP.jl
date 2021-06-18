@@ -44,6 +44,13 @@ savepath = save_dialog_native(
 print("What is the heritability for this trait?> ")
 h2 = parse(Float64, readline(stdin))
 
+beefblup(path, savepath, h2)
+
+end
+
+# Main worker function, can perform all the work if given all the user input
+function beefblup(path::String, savepath::String, h2::Float64)
+
 ### Import input filename
 print("[🐮]: Importing data file...")
 
