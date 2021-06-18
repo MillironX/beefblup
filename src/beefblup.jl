@@ -48,7 +48,7 @@ h2 = parse(Float64, readline(stdin))
 print("[🐮]: Importing data file...")
 
 # Import data from a suitable spreadsheet
-data = CSV.File(path) |> DataFrame
+data = DataFrame(CSV.File(path))
 
 print("Done!\n")
 
@@ -128,8 +128,8 @@ for i in 1:length(normal)
     # Remove the normal version from the analysis
     effecttraits = traits[findall(x -> x != normal[i], traits)]
     # Iterate inside of the group
-    for j in 1:(length(effecttraits) - 1)
-            matchedindex = findall(x -> x != effecttraits[j], localdata)
+    for j in 1:(length(effecttraits))
+            matchedindex = findall(x -> x == effecttraits[j], localdata)
             X[matchedindex, counter] .= 1
             # Add this trait to the string
             adjustedtraits[counter - 1] = traits[j]
