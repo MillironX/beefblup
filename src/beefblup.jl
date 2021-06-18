@@ -6,7 +6,7 @@ exec julia --project=$(realpath $(dirname $(dirname "${BASH_SOURCE[0]}"))) "${BA
 # Main script for performing single-variate BLUP to find beef cattle
 # breeding values
 # Usage: julia beefblup.jl
-# (C) 2020 Thomas A. Christensen II
+# (C) 2021 Thomas A. Christensen II
 # Licensed under BSD-3-Clause License
 # cSpell:includeRegExp #.*
 # cSpell:includeRegExp ("""|''')[^\1]*\1
@@ -19,8 +19,8 @@ using Dates
 using Gtk
 
 # Display stuff
-println("beefblup v 0.1")
-println("(C) 2020 Thomas A. Christensen II")
+println("beefblup v 0.2")
+println("(C) 2021 Thomas A. Christensen II")
 println("https://github.com/millironx/beefblup")
 print("\n")
 
@@ -218,7 +218,7 @@ traitname = names(data)[end]
 # Start printing results to output
 fileID = open(savepath, "w")
 write(fileID, "beefblup Results Report\n")
-write(fileID, "Produced using beefblup for Julia (")
+write(fileID, "Produced using beefblup (")
 write(fileID, "https://github.com/millironx/beefblup")
 write(fileID, ")\n\n")
 write(fileID, "Input:\t")
