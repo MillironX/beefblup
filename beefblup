@@ -14,7 +14,7 @@ using ArgParse
 # If this is run without arguments, catch that before parsing
 if isempty(ARGS)
     BeefBLUP.beefblup()
-    return
+    exit()
 end
 
 # Setup the argument table
