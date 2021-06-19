@@ -43,7 +43,7 @@ end
 
 function beefblup(datafile::String, h2::Float64)
     # Assume the data is named the same as the file without the trailing extension
-    dataname = split(datafile, ".")[1:end-1]
+    dataname = join(split(datafile, ".")[1:end-1])
 
     # Create a new results name
     resultsfile = string(dataname, "_results.txt")
