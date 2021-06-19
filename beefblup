@@ -36,11 +36,6 @@ end
 
 arguments = parse_args(argsettings)
 
-println("Parsed args:")
-for (arg,val) in arguments
-    println("  $arg  =>  $val")
-end
-
 h2 = arguments["heritability"]
 
 if isnothing(arguments["resultsfile"])
@@ -48,5 +43,4 @@ if isnothing(arguments["resultsfile"])
     exit()
 end
 
-print(arguments["datafile"], arguments["resultsfile"], string(h2))
 BeefBLUP.beefblup(arguments["datafile"], arguments["resultsfile"], h2)
