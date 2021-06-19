@@ -18,7 +18,6 @@ using Gtk
 # Main entry-level function - acts just like the script
 function beefblup()
 
-### Prompt User
 # Ask for an input spreadsheet
 path = open_dialog_native(
     "Select a beefblup worksheet",
@@ -75,10 +74,7 @@ fixedfx = select(data, Not([:id, :birthdate, :sire, :dam]))[:,1:end-1]
 # Find any columns that need to be deleted
 for i in 1:ncol(fixedfx)
     if length(unique(fixedfx[:,i])) <= 1
-        colname = names(fixedfx)[i]
-        print("Column '")
-        print(colname)
-        print("' does not have any unique animals and will be removed from this analysis\n")
+        @warn string("column '", names(fixedfx[i]), "' does not have any unique animals and will be removed from this analysis")
         deletecols!(fixedfx,i)
     end
 end
@@ -92,9 +88,7 @@ end
 
 # If there are more groups than animals, then the analysis cannot continue
 if sum(numgroups) >= numanimals
-    println("There are more contemporary groups than animals. The analysis will
-    now abort.")
-    exit()
+    throw(ErrorException("there are more contemporary groups than animals"))
 end
 
 # Define a "normal" animal as one of the last in the groups, provided that

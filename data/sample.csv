@@ -1,8 +1,8 @@
-id,birthdate,dam,sire,year,sex,weaning_weight
-1,1/1/1990,,,1990,male,354
-2,1/1/1990,,,1990,female,251
-3,1/1/1991,,1,1991,male,327
-4,1/1/1991,,1,1991,female,328
-5,1/1/1991,2,1,1991,male,301
-6,1/1/1991,2,,1991,female,270
-7,1/1/1992,,,1992,male,330
+id,birthdate,dam,sire,year,sex,species,weaning_weight
+1,1/1/1990,,,1990,male,cow,354
+2,1/1/1990,,,1990,female,cow,251
+3,1/1/1991,,1,1991,male,cow,327
+4,1/1/1991,,1,1991,female,cow,328
+5,1/1/1991,2,1,1991,male,cow,301
+6,1/1/1991,2,,1991,female,cow,270
+7,1/1/1992,,,1992,male,cow,330
