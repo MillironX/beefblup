@@ -2,5 +2,51 @@
 #=
 exec julia --project="$(realpath "$(dirname "${BASH_SOURCE[0]}")")" "${BASH_SOURCE[0]}" "$@"
 =#
+# beefblup cli
+# Provides a convenient CLI for using beefblup
+# cSpell:includeRegExp #.*
+# cSpell:includeRegExp ("""|''')[^\1]*\1
+
+# Import packages
 using BeefBLUP
-BeefBLUP.beefblup()
+using ArgParse
+
+# If this is run without arguments, catch that before parsing
+if isempty(ARGS)
+    BeefBLUP.beefblup()
+    return
+end
+
+# Setup the argument table
+argsettings = ArgParseSettings()
+@add_arg_table argsettings begin
+    "datafile"
+        help = "datasheet containing the pedigree, fixed effects, and response trait formatted in CSV"
+        required = true
+        arg_type = String
+    "resultsfile"
+        help = "filename for storing the results of the analysis"
+        required = false
+        arg_type = String
+    "--heritability", "-t"
+        help = "heritability of the response trait being analyzed"
+        required = true
+        arg_type = Float64
+end
+
+arguments = parse_args(argsettings)
+
+println("Parsed args:")
+for (arg,val) in arguments
+    println("  $arg  =>  $val")
+end
+
+h2 = arguments["heritability"]
+
+if isnothing(arguments["resultsfile"])
+    BeefBLUP.beefblup(arguments["datafile"], h2)
+    exit()
+end
+
+print(arguments["datafile"], arguments["resultsfile"], string(h2))
+BeefBLUP.beefblup(arguments["datafile"], arguments["resultsfile"], h2)
