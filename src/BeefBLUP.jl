@@ -75,7 +75,7 @@ fixedfx = select(data, Not([:id, :birthdate, :sire, :dam]))[:,1:end-1]
 for i in 1:ncol(fixedfx)
     if length(unique(fixedfx[:,i])) <= 1
         @warn string("column '", names(fixedfx)[i], "' does not have any unique animals and will be removed from this analysis")
-        select!(fixedfx,Not(i))
+        DataFrames.select!(fixedfx,Not(i))
     end
 end
 
