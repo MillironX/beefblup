@@ -1,12 +1,13 @@
 name = "BeefBLUP"
-uuid = "03993faf-e476-444a-86c9-f31e8122fa24"
-authors = ["Thomas A. Christensen II <25492070+MillironX@users.noreply.github.com>"]
-version = "0.3.0"
+uuid = "4c4dd571-0773-455e-9a95-72727008e3f4"
+authors = ["Thomas A. Christensen II <25492070+MillironX@users.noreply.github.com> and contributors"]
+version = "0.1.0"
 
-[deps]
-ArgParse = "c7e460c6-2fb9-53a9-8c5b-16f535851c63"
-CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
-DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
-Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
-Gtk = "4c0ca9eb-093a-5379-98c5-f87ac0bbbf44"
-LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+[compat]
+julia = "1.3"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
