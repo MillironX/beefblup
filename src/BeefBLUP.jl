@@ -71,65 +71,7 @@ function beefblup(path::String, savepath::String, h2::Float64)
     # Extract all of the fixed effects
     fixedfx = select(data, Not([:id, :birthdate, :sire, :dam]))[:,1:end - 1]
 
-    # Find any columns that need to be deleted
-    for i in 1:ncol(fixedfx)
-        if length(unique(fixedfx[:,i])) <= 1
-            @warn string("column '", names(fixedfx)[i], "' does not have any unique animals and will be removed from this analysis")
-            DataFrames.select!(fixedfx, Not(i))
-        end
-    end
-
-    # Determine how many contemporary groups there are
-    numtraits = ncol(fixedfx)
-    numgroups = ones(1, numtraits)
-    for i in 1:numtraits
-        numgroups[i] = length(unique(fixedfx[:,i]))
-    end
-
-    # If there are more groups than animals, then the analysis cannot continue
-    if sum(numgroups) >= numanimals
-        throw(ErrorException("there are more contemporary groups than animals"))
-    end
-
-    # Define a "normal" animal as one of the last in the groups, provided that
-    # all traits do not have null values
-    normal = Array{String}(undef, 1, numtraits)
-    for i in 1:numtraits
-        for j in numanimals:-1:1
-            if !ismissing(fixedfx[j,i])
-                normal[i] = string(fixedfx[j,i])
-                break
-            end
-        end
-    end
-
-    # Form the fixed-effect matrix
-    X = zeros(Int8, numanimals, floor(Int, sum(numgroups)) - length(numgroups) + 1)
-    X[:,1] = ones(Int8, 1, numanimals)
-
-    # Create an external counter that will increment through both loops
-    counter = 2
-
-    # Store the traits in a string array
-    adjustedtraits =
-    Array{String}(undef,floor(Int, sum(numgroups)) - length(numgroups))
-    # Iterate through each group
-    for i in 1:length(normal)
-        # Find the traits that are present in this trait
-        localdata = string.(fixedfx[:,i])
-        traits = unique(localdata)
-        # Remove the normal version from the analysis
-        effecttraits = traits[findall(x -> x != normal[i], traits)]
-        # Iterate inside of the group
-        for j in 1:(length(effecttraits))
-            matchedindex = findall(x -> x == effecttraits[j], localdata)
-            X[matchedindex, counter] .= 1
-            # Add this trait to the string
-            adjustedtraits[counter - 1] = traits[j]
-            # Increment the big counter
-            counter = counter + 1
-        end
-    end
+    (X, numgroups, normal, adjustedtraits) = fixedeffectmatrix(fixedfx)
 
     # Create an empty matrix for the additive relationship matrix
     A = zeros(numanimals, numanimals)
@@ -261,4 +203,72 @@ function beefblup(path::String, savepath::String, h2::Float64)
     close(fileID)
 
 end
+
+function fixedeffectmatrix(fixedeffects::AbstractDataFrame)
+    # Find any columns that need to be deleted
+    for i in 1:ncol(fixedeffects)
+        if length(unique(fixedeffects[:,i])) <= 1
+            @warn string("column '", names(fixedeffects)[i], "' does not have any unique animals and will be removed from this analysis")
+            DataFrames.select!(fixedeffects, Not(i))
+        end
+    end
+
+    # Determine how many contemporary groups there are
+    numtraits = ncol(fixedeffects)
+    numgroups = ones(1, numtraits)
+    for i in 1:numtraits
+        numgroups[i] = length(unique(fixedeffects[:,i]))
+    end
+
+    # If there are more groups than animals, then the analysis cannot continue
+    numanimals = length(fixedeffects[:,1])
+    if sum(numgroups) >= numanimals
+        throw(ErrorException("there are more contemporary groups than animals"))
+    end
+
+    # Define a "normal" animal as one of the last in the groups, provided that
+    # all traits do not have null values
+    numtraits = ncol(fixedeffects)
+    numanimals = length(fixedeffects[:,1])
+    normal = Array{String}(undef, 1, numtraits)
+    for i in 1:numtraits
+        for j in numanimals:-1:1
+            if !ismissing(fixedeffects[j,i])
+                normal[i] = string(fixedeffects[j,i])
+                break
+            end
+        end
+    end
+
+    # Form the fixed-effect matrix
+    X = zeros(Int8, numanimals, floor(Int, sum(numgroups)) - length(numgroups) + 1)
+    X[:,1] = ones(Int8, 1, numanimals)
+
+    # Create an external counter that will increment through both loops
+    counter = 2
+
+    # Store the traits in a string array
+    adjustedtraits =
+    Array{String}(undef,floor(Int, sum(numgroups)) - length(numgroups))
+    # Iterate through each group
+    for i in 1:length(normal)
+        # Find the traits that are present in this trait
+        localdata = string.(fixedeffects[:,i])
+        traits = unique(localdata)
+        # Remove the normal version from the analysis
+        effecttraits = traits[findall(x -> x != normal[i], traits)]
+        # Iterate inside of the group
+        for j in 1:(length(effecttraits))
+            matchedindex = findall(x -> x == effecttraits[j], localdata)
+            X[matchedindex, counter] .= 1
+            # Add this trait to the string
+            adjustedtraits[counter - 1] = traits[j]
+            # Increment the big counter
+            counter = counter + 1
+        end
+    end
+
+    return X, numgroups, normal, adjustedtraits
+end
+
 end
