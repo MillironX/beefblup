@@ -4,7 +4,6 @@
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://MillironX.github.io/beefblup/dev)
 [![Build Status](https://travis-ci.com/millironx/beefblup.svg?branch=master)](https://travis-ci.com/millironx/beefblup)
 [![Coverage](https://codecov.io/gh/millironx/beefblup/branch/master/graph/badge.svg)](https://codecov.io/gh/millironx/beefblup)
-[![Code Style: Blue](https://img.shields.io/badge/code%20style-blue-4495d1.svg)](https://github.com/invenia/BlueStyle)
 [![GitHub license](https://img.shields.io/github/license/MillironX/beefblup)](https://github.com/MillironX/beefblup/blob/master/LICENSE.md)
 [![Join the chat at https://gitter.im/beefblup/community](https://badges.gitter.im/beefblup/community.svg)](https://gitter.im/beefblup/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Github all releases](https://img.shields.io/github/downloads/MillironX/beefblup/total.svg)](https://GitHub.com/MillironX/beefblup/releases)
