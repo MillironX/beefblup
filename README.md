@@ -21,7 +21,7 @@ Why? It's part of my effort to
    file](https://github.com/MillironX/beefblup/archive/refs/tags/v0.2.zip) and unzip it   someplace memorable
 3. In your file explorer, copy the address of the "beefblup" folder
 4. Launch Julia
-5. Type `cd("<the address copied in step 5")` and press **Enter** (For example,
+5. Type `cd("<the address copied in step 5>")` and press **Enter** (For example,
    `cd("C:\Users\MillironX\Documents\beefblup")`)
 6. Type the `]` key
 7. Type `activate .` and press **Enter**
