@@ -2,13 +2,13 @@
 CurrentModule = BeefBLUP
 ```
 
-# BeefBLUP
+# beefblup
 
-Documentation for [BeefBLUP](https://github.com/MillironX/BeefBLUP.jl).
+Documentation for [BeefBLUP](https://github.com/MillironX/beefblup).
 
 ```@index
 ```
 
-```@autodocs
-Modules = [BeefBLUP]
+```@docs
+beefblup
 ```
