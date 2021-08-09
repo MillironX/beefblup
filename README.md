@@ -14,7 +14,7 @@ Why? It's part of my effort to
 
 1. [Download and install Julia](https://julialang.org/downloads/platform/)
 2. Download the [beefblup ZIP
-   file](https://github.com/MillironX/beefblup/archive/refs/tags/v0.2.zip) and unzip it   someplace memorable
+   file](https://github.com/MillironX/beefblup/archive/refs/tags/v0.2.1.zip) and unzip it   someplace memorable
 3. In your file explorer, copy the address of the "beefblup" folder
 4. Launch Julia
 5. Type `cd("<the address copied in step 5")` and press **Enter** (For example,
