@@ -15,5 +15,5 @@
 *.pdf -crlf -diff -merge
 *.jpg -crlf -diff -merge
 *.png -crlf -diff -merge
-src/beefblup.jl linguist-language=Julia
 *.jl linguist-language=Julia
+beefblup linguist-language=Julia
