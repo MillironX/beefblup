@@ -19,6 +19,6 @@ makedocs(;
 )
 
 deploydocs(;
-    repo="github.com/MillironX/BeefBLUP.jl",
+    repo="github.com/MillironX/beefblup",
     devbranch="develop",
 )
