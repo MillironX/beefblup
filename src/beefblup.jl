@@ -1,4 +1,5 @@
 #!/bin/bash
+# -*- mode: julia -*-
 #=
 exec julia --project=$(realpath $(dirname $(dirname "${BASH_SOURCE[0]}"))) "${BASH_SOURCE[0]}" "$@"
 =#
