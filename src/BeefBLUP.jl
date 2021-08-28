@@ -64,47 +64,13 @@ function beefblup(path::String, savepath::String, h2::Float64)
     # Define fields to hold id values for animals and their parents
     numanimals = length(data.id)
 
-    # Find the index values for animals and their parents
-    dam = indexin(data.dam, data.id)
-    sire = indexin(data.sire, data.id)
+    # Calculate the relationship matrix
+    A = additiverelationshipmatrix(data.id, data.dam, data.sire)
 
     # Extract all of the fixed effects
     fixedfx = select(data, Not([:id, :birthdate, :sire, :dam]))[:,1:end - 1]
 
     (X, numgroups, normal, adjustedtraits) = fixedeffectmatrix(fixedfx)
-
-    # Create an empty matrix for the additive relationship matrix
-    A = zeros(numanimals, numanimals)
-
-    # Create the additive relationship matrix by the FORTRAN method presented by
-    # Henderson
-    for i in 1:numanimals
-        if !isnothing(dam[i]) && !isnothing(sire[i])
-            for j in 1:(i - 1)
-                A[j,i] = 0.5 * (A[j,sire[i]] + A[j,dam[i]])
-                A[i,j] = A[j,i]
-            end
-            A[i,i] = 1 + 0.5 * A[sire[i], dam[i]]
-        elseif !isnothing(dam[i]) && isnothing(sire[i])
-        for j in 1:(i - 1)
-            A[j,i] = 0.5 * A[j,dam[i]]
-            A[i,j] = A[j,i]
-        end
-        A[i,i] = 1
-    elseif isnothing(dam[i]) && !isnothing(sire[i])
-        for j in 1:(i - 1)
-            A[j,i] = 0.5 * A[j,sire[i]]
-            A[i,j] = A[j,i]
-        end
-        A[i,i] = 1
-    else
-        for j in 1:(i - 1)
-            A[j,i] = 0
-            A[i,j] = 0
-        end
-        A[i,i] = 1
-        end
-    end
 
     # Extract the observed data
     Y = convert(Array{Float64}, data[:,end])
@@ -270,5 +236,62 @@ function fixedeffectmatrix(fixedeffects::AbstractDataFrame)
 
     return X, numgroups, normal, adjustedtraits
 end
+
+"""
+    additiverelationshipmatrix(id, dam, sire)
+
+Returns the additive numerator relationship matrix based on the pedigree provided in `dam`
+and `sire` for animals in `id`.
+
+"""
+function additiverelationshipmatrix(id::AbstractVector, damid::AbstractVector, sireid::AbstractVector)
+    # Sanity-check for valid pedigree
+    if !(length(id) == length(damid) && length(damid) == length(sireid))
+        throw(ArgumentError("id, dam, and sire must be of the same length"))
+    end
+
+    # Convert to positions
+    dam = indexin(damid, id)
+    sire = indexin(sireid, id)
+
+    # Calculate loop iterations
+    numanimals = length(dam)
+
+    # Create an empty matrix for the additive relationship matrix
+    A = zeros(numanimals, numanimals)
+
+    # Create the additive relationship matrix by the FORTRAN method presented by
+    # Henderson
+    for i in 1:numanimals
+        if !isnothing(dam[i]) && !isnothing(sire[i])
+            for j in 1:(i - 1)
+                A[j,i] = 0.5 * (A[j,sire[i]] + A[j,dam[i]])
+                A[i,j] = A[j,i]
+            end
+            A[i,i] = 1 + 0.5 * A[sire[i], dam[i]]
+        elseif !isnothing(dam[i]) && isnothing(sire[i])
+        for j in 1:(i - 1)
+            A[j,i] = 0.5 * A[j,dam[i]]
+            A[i,j] = A[j,i]
+        end
+        A[i,i] = 1
+    elseif isnothing(dam[i]) && !isnothing(sire[i])
+        for j in 1:(i - 1)
+            A[j,i] = 0.5 * A[j,sire[i]]
+            A[i,j] = A[j,i]
+        end
+        A[i,i] = 1
+    else
+        for j in 1:(i - 1)
+            A[j,i] = 0
+            A[i,j] = 0
+        end
+        A[i,i] = 1
+        end
+    end
+
+    return A
+end
+
 
 end
