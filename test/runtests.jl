@@ -17,5 +17,5 @@ using Test
     id = collect(1:7)
     dam_id = [missing, missing, missing, missing, 2, 2, missing]
     sire_id = [missing, missing, 1, 1, 1, missing, missing]
-    @test BeefBLUP.additiverelationshipmatrix(id, dam, sire) == correctA
+    @test BeefBLUP.additiverelationshipmatrix(id, dam_id, sire_id) == correctA
 end
