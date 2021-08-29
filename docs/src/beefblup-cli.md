@@ -1,7 +1,8 @@
 ```@meta
 CurrentModule = BeefBLUP
 ```
-beefblup Command Line Interface (CLI) documentation
+
+# beefblup Command Line Interface (CLI) documentation
 
 > _A work in progress_
 

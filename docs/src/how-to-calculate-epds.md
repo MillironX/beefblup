@@ -15,7 +15,7 @@ Since I'm mostly talking to American beef producers, though, we'll stick with
 EPDs for most of this discussion.
 
 Expected Breeding Values (EBVs) (which are more often halved and published as
-Expected Progeny Differences [EPDs] or Predicted Transmitting Abilities [PTAs]
+Expected Progeny Differences (EPDs) or Predicted Transmitting Abilities (PTAs)
 in the United States) are generally found using Charles Henderson's linear
 mixed-model equations. Great, you say, what is that? I'm glad you asked...
 
@@ -29,15 +29,17 @@ P = G + E
 
 Where:
 
-- _P_ = phenotype
-- _G_ = genotype (think: breeding value)
-- _E_ = environmental factors
+- ``P`` = phenotype
+- ``G`` = genotype (think: breeding value)
+- ``E`` = environmental factors
 
 Now, we can't identify _every_ environmental factor that affects phenotype, but
-we can identify some of them, so let's substitute _E_ with some absolutes. A
+we can identify some of them, so let's substitute ``E`` with some absolutes. A
 good place to start is the "contemporary group" listings for the trait of
-interest in the [BIF Guidelines], though for the purposes of this example, I'm
-only going to consider sex, and birth year.
+interest in the
+[BIF Guidelines](https://beefimprovement.org/wp-content/uploads/2018/03/BIFGuidelinesFinal_updated0318.pdf),
+though for the purposes of this example, I'm only going to consider sex, and
+birth year.
 
 ```math
 P = G + E_{year} + E_{sex}
@@ -45,61 +47,61 @@ P = G + E_{year} + E_{sex}
 
 Where:
 
-- _E<sub>n</sub>_ is the effect of _n_ on the phenotype
+- ``E_n`` is the effect of ``n`` on the phenotype
 
-Now let's say I want to find the weaning weight breeding value (_G_) of my
+Now let's say I want to find the weaning weight breeding value (``G``) of my
 favorite herd bull. I compile his stats, and then plug them into the equation
-and solve for G, right? Let's try that.
+and solve for ``G``, right? Let's try that.
 
 ### Calf Records
 
-ID | Birth Year | Sex    | YW (kg)
--- | -          | -      | -
-1  | 1990       | Male   | 354
+| ID | Birth Year | Sex    | YW (kg) |
+|:-- | :--------- | :----- |:------- |
+| 1  | 1990       | Male   | 354     |
 
 ```math
-354 \textup{kg} &= G_1 + E_{1990} + E_{male}
+354 \  \textup{kg} = G_1 + E_{1990} + E_{male}
 ```
 
-Hmm. I just realized I don't know any of those _E_ values. Come to think of it,
+Hmm. I just realized I don't know any of those ``E`` values. Come to think of it,
 I remember from math class that I will need as many equations as I have
 unknowns, so I will add equations for other animals that I have records for.
 
 ### Calf Records
 
-ID | Birth Year | Sex    | YW (kg)
--- | -          | -      | -
-1  | 1990       | Male   | 354
-2  | 1990       | Female | 251
-3  | 1991       | Male   | 327
-4  | 1991       | Female | 328
-5  | 1991       | Male   | 301
-6  | 1991       | Female | 270
-7  | 1992       | Male   | 330
+| ID  | Birth Year | Sex    | YW (kg) |
+|:--- |:---------- |:------ |:------- |
+| 1   | 1990       | Male   | 354     |
+| 2   | 1990       | Female | 251     |
+| 3   | 1991       | Male   | 327     |
+| 4   | 1991       | Female | 328     |
+| 5   | 1991       | Male   | 301     |
+| 6   | 1991       | Female | 270     |
+| 7   | 1992       | Male   | 330     |
 
 ```math
 \begin{aligned}
-251 \textup{kg} &= G_2 + E_{1990} + E_{female} \\
-327 \textup{kg} &= G_3 + E_{1991} + E_{male} \\
-328 \textup{kg} &= G_4 + E_{1991} + E_{female} \\
-301 \textup{kg} &= G_5 + E_{1991} + E_{male} \\
-270 \textup{kg} &= G_6 + E_{1991} + E_{female} \\
-330 \textup{kg} &= G_7 + E_{1992} + E_{male}
+251 \ \textup{kg} &= G_2 + E_{1990} + E_{female} \\
+327 \ \textup{kg} &= G_3 + E_{1991} + E_{male} \\
+328 \ \textup{kg} &= G_4 + E_{1991} + E_{female} \\
+301 \ \textup{kg} &= G_5 + E_{1991} + E_{male} \\
+270 \ \textup{kg} &= G_6 + E_{1991} + E_{female} \\
+330 \ \textup{kg} &= G_7 + E_{1992} + E_{male}
 \end{aligned}
 ```
 
 Drat! Every animal I added brings more variables into the system than it
 eliminates! In fact, since each cow brings in _at least_ one term
-(_G<sub>n</sub>_), I will never be able to write enough equations to solve for
-_G_ numerically. I will have to use a different approach.
+(``G_n``), I will never be able to write enough equations to solve for
+``G`` numerically. I will have to use a different approach.
 
 ## The statistical model: the setup
 
-Since I can never solve for _G_ directly, I will have to find some way to
-estimate it. I can switch to a statistical model and solve for _G_ that way. The
+Since I can never solve for ``G`` directly, I will have to find some way to
+estimate it. I can switch to a statistical model and solve for ``G`` that way. The
 caveat with a statistical model is that there will be some level of error, but
 so long as we know and can control the level of error, that will be better than
-not knowing _G_ at all.
+not knowing ``G`` at all.
 
 Since we're switching into a statistical space, we should also switch the
 variables we're using. I'll rewrite the first equation as
@@ -110,12 +112,12 @@ y = b + u + e
 
 Where:
 
-- _y_ = Phenotype
-- _b_ = Environment
-- _u_ = Genotype
-- _e_ = Error
+- ``y`` = Phenotype
+- ``b`` = Environment
+- ``u`` = Genotype
+- ``e`` = Error
 
-It's not as easy as simply substituting _b_ for every _E_ that we had above,
+It's not as easy as simply substituting ``b`` for every ``E`` that we had above,
 however. The reason for that is that we must make the assumption that
 environment is a **fixed effect** and that genotype is a **random effect**. I'll
 go over why that is later, but for now, understand that we need to transform the
@@ -126,20 +128,20 @@ We'll start with the environment terms.
 ## The statistical model: environment as fixed effects
 
 To properly transform the equations, I will have to introduce
-_b<sub>mean</sub>_ terms in each animal's equation. This is part of the fixed
+``b_{mean}`` terms in each animal's equation. This is part of the fixed
 effect statistical assumption, and it will let us obtain a solution.
 
 Here are the transformed equations:
 
 ```math
 \begin{aligned}
-354 \textup{kg} &= u_1 + b_{mean} + b_{1990} + b_{male} + e_1 \\
-251 \textup{kg} &= u_2 + b_{mean} + b_{1990} + b_{female} + e_2 \\
-327 \textup{kg} &= u_3 + b_{mean} + b_{1991} + b_{male} + e_3 \\
-328 \textup{kg} &= u_4 + b_{mean} + b_{1991} + b_{female} +e_4 \\
-301 \textup{kg} &= u_5 + b_{mean} + b_{1991} + b_{male} + e_5 \\
-270 \textup{kg} &= u_6 + b_{mean} + b_{1991} + b_{female} + e_6 \\
-330 \textup{kg} &= u_7 + b_{mean} + b_{1992} + b_{male} + e_7
+354 \ \textup{kg} &= u_1 + b_{mean} + b_{1990} + b_{male}   + e_1 \\
+251 \ \textup{kg} &= u_2 + b_{mean} + b_{1990} + b_{female} + e_2 \\
+327 \ \textup{kg} &= u_3 + b_{mean} + b_{1991} + b_{male}   + e_3 \\
+328 \ \textup{kg} &= u_4 + b_{mean} + b_{1991} + b_{female} +e_4 \\
+301 \ \textup{kg} &= u_5 + b_{mean} + b_{1991} + b_{male}   + e_5 \\
+270 \ \textup{kg} &= u_6 + b_{mean} + b_{1991} + b_{female} + e_6 \\
+330 \ \textup{kg} &= u_7 + b_{mean} + b_{1992} + b_{male}   + e_7
 \end{aligned}
 ```
 
@@ -148,13 +150,13 @@ equations above to a single matrix equation that means the exact same thing.
 
 ```math
 \begin{bmatrix}
-354 \textup{kg} \\
-251 \textup{kg} \\
-327 \textup{kg} \\
-328 \textup{kg} \\
-301 \textup{kg} \\
-270 \textup{kg} \\
-330 \textup{kg}
+354 \ \textup{kg} \\
+251 \ \textup{kg} \\
+327 \ \textup{kg} \\
+328 \ \textup{kg} \\
+301 \ \textup{kg} \\
+270 \ \textup{kg} \\
+330 \ \textup{kg}
 \end{bmatrix}
 =
 \begin{bmatrix}
@@ -200,9 +202,10 @@ e_7
 \end{bmatrix}
 ```
 
-That's a nice equation, but now my hand is getting tired writing all those _b_
-terms over and over again, so I'm going to use [the dot product] to condense
-this down.
+That's a nice equation, but now my hand is getting tired writing all those ``b``
+terms over and over again, so I'm going to use
+[the dot product](https://www.khanacademy.org/math/precalculus/x9e81a4f98389efdf:matrices/x9e81a4f98389efdf:multiplying-matrices-by-matrices/v/matrix-multiplication-intro)
+to condense this down.
 
 ```math
 \begin{bmatrix}
@@ -233,7 +236,6 @@ u_7
 1 & 0 & 1 & 0 & 1 & 0 \\
 1 & 0 & 0 & 1 & 1 & 0
 \end{bmatrix}
-+
 \begin{bmatrix}
 b_{mean} \\
 b_{1990} \\
@@ -257,26 +259,27 @@ e_7
 That matrix in the middle with all the zeros and ones is called the **incidence
 matrix**, and essentially reads like a table with each row corresponding to an
 animal, and each column corresponding to a fixed effect. For brevity, we'll just
-call it _**X**_, though. One indicates that the animal and effect go together,
+call it ``X``, though. One indicates that the animal and effect go together,
 and zero means they don't. For our record, we could write a table to go with
-_**X**_, and it would look like this:
+``X``, and it would look like this:
 
-Animal | mean | 1990 | 1991 | 1992 | male | female
---     | -    | -    | -    | -    | -    | -
-1      | yes  | yes  | no   | no   | yes  | no
-2      | yes  | yes  | no   | no   | no   | yes
-3      | yes  | no   | yes  | no   | yes  | no
-4      | yes  | no   | yes  | no   | no   | yes
-5      | yes  | no   | yes  | no   | yes  | no
-6      | yes  | no   | yes  | no   | no   | yes
-7      | yes  | no   | no   | yes  | yes  | no
+| Animal | mean | 1990 | 1991 | 1992 | male | female |
+|:------ |:---- |:---- |:---- |:---- |:---- |:------ |
+| 1      | yes  | yes  | no   | no   | yes  | no     |
+| 2      | yes  | yes  | no   | no   | no   | yes    |
+| 3      | yes  | no   | yes  | no   | yes  | no     |
+| 4      | yes  | no   | yes  | no   | no   | yes    |
+| 5      | yes  | no   | yes  | no   | yes  | no     |
+| 6      | yes  | no   | yes  | no   | no   | yes    |
+| 7      | yes  | no   | no   | yes  | yes  | no     |
 
-Now that we have _**X**_, we have the ability to start making changes to allow
-us to solve for _u_. Immediately, we see that _**X**_ is **singular**, meaning
+Now that we have ``X``, we have the ability to start making changes to allow
+us to solve for ``u``. Immediately, we see that ``X`` is **singular**, meaning
 it can't be solved directly. We kind of already knew that, but now we can
-quantify it. We calculate the [rank of _**X**_], and find that there is only
-enough information contained in it to solve for 4 variables, which means we need
-to eliminate two columns.
+quantify it. We calculate the
+[rank of ``X``](https://math.stackexchange.com/a/2080577),
+and find that there is only enough information contained in it to solve for 4
+variables, which means we need to eliminate two columns.
 
 There are several ways to effectively eliminate fixed effects in this type of
 system, but one of the simplest and the most common methods is to declare a
@@ -288,27 +291,22 @@ last occuring form of each variable.
 
 ### Base population
 
-<dl>
-<dt>Year</dt>
-<dd>1992</dd>
-
-<dt>Sex</dt>
-<dd>Male</dd>
-</dl>
+- **Year**: 1992
+- **Sex**: Female
 
 Now in order to use the base population, we simply drop the columns representing
-conformity with the traits in the base population from _**X**_.  Our new
+conformity with the traits in the base population from ``X````.  Our new
 equation looks like
 
 ```math
 \begin{bmatrix}
-354 \textup{kg} \\
-251 \textup{kg} \\
-327 \textup{kg} \\
-328 \textup{kg} \\
-301 \textup{kg} \\
-270 \textup{kg} \\
-330 \textup{kg}
+354 \ \textup{kg} \\
+251 \ \textup{kg} \\
+327 \ \textup{kg} \\
+328 \ \textup{kg} \\
+301 \ \textup{kg} \\
+270 \ \textup{kg} \\
+330 \ \textup{kg}
 \end{bmatrix}
 =
 \begin{bmatrix}
@@ -350,24 +348,23 @@ e_7
 
 And the table for humans to understand:
 
-Animal | mean | 1990 | 1991 | female
---     | -    | -    | -    | -
-1      | yes  | yes  | no   | no
-2      | yes  | yes  | no   | yes
-3      | yes  | no   | yes  | no
-4      | yes  | no   | yes  | yes
-5      | yes  | no   | yes  | no
-6      | yes  | no   | yes  | yes
-7      | yes  | no   | no   | no
+| Animal | mean | 1990 | 1991 | female |
+|:------ |:---- |:---- |:---- |:------ |
+| 1      | yes  | yes  | no   | no     |
+| 2      | yes  | yes  | no   | yes    |
+| 3      | yes  | no   | yes  | no     |
+| 4      | yes  | no   | yes  | yes    |
+| 5      | yes  | no   | yes  | no     |
+| 6      | yes  | no   | yes  | yes    |
+| 7      | yes  | no   | no   | no     |
 
 Even though each animal is said to participate in the mean, the result for the
 mean will now actually be the average of the base population. Math is weird
 sometimes.
 
-Double-checking, the rank of _**X**_ is still 4, so we can solve for the average
+Double-checking, the rank of ``X`` is still 4, so we can solve for the average
 of the base population, and the effect of being born in 1990, the effect of
-being born in 1991, and the effect of being female (although I think [Calvin
-already has an idea about that one]).
+being born in 1991, and the effect of being male.
 
 Whew! That was some transformation. We still haven't constrained this model
 enough to solve it, though. Now on to the genotype.
@@ -389,35 +386,35 @@ We'll need a pedigree for our animals:
 
 ### Calf Records
 
-ID | Sire | Dam | Birth Year | Sex    | YW (kg)
--- | -    | -   | -          | -      | -
-1  | NA   | NA  | 1990       | Male   | 354
-2  | NA   | NA  | 1990       | Female | 251
-3  | 1    | NA  | 1991       | Male   | 327
-4  | 1    | NA  | 1991       | Female | 328
-5  | 1    | 2   | 1991       | Male   | 301
-6  | NA   | 2   | 1991       | Female | 270
-7  | NA   | NA  | 1992       | Male   | 330
+| ID | Sire | Dam | Birth Year | Sex    | YW (kg) |
+|:-- |:---- |:--- |:---------- |:------ |:------- |
+| 1  | NA   | NA  | 1990       | Male   | 354     |
+| 2  | NA   | NA  | 1990       | Female | 251     |
+| 3  | 1    | NA  | 1991       | Male   | 327     |
+| 4  | 1    | NA  | 1991       | Female | 328     |
+| 5  | 1    | 2   | 1991       | Male   | 301     |
+| 6  | NA   | 2   | 1991       | Female | 270     |
+| 7  | NA   | NA  | 1992       | Male   | 330     |
 
 Now, because cows sexually reproduce, the genotype of one animal is halfway the
-same as that of either parent.<sup>[a](#a)</sup> It should go without saying
-that each animal's genotype is identical to that of itself. From this we can
-then find the numerical multiplier for any relative (grandparent = 1/4, full
-sibling = 1, half sibling = 1/2, etc.). Let's write those values down in a
-table.
+same as that of either parent (exception: inbreeding, see below). It should go
+without saying that each animal's genotype is identical to that of itself. From
+this we can then find the numerical multiplier for any relative (grandparent =
+1/4, full sibling = 1, half sibling = 1/2, etc.). Let's write those values down
+in a table.
 
-ID | 1   | 2   | 3   | 4   | 5   | 6   | 7
--- | -   | -   | -   | -   | -   | -   | -
-1  | 1   | 0   | 1/2 | 1/2 | 1/2 | 0   | 0
-2  | 0   | 1   | 0   | 0   | 1/2 | 1/2 | 0
-3  | 1/2 | 0   | 1   | 1/4 | 1/4 | 0   | 0
-4  | 1/2 | 0   | 1/4 | 1   | 1/4 | 0   | 0
-5  | 1/2 | 1/2 | 1/4 | 1/4 | 1   | 1/4 | 0
-6  | 0   | 1/2 | 0   | 0   | 1/4 | 1   | 0
-7  | 0   | 0   | 0   | 0   | 0   | 0   | 1
+| ID | 1   | 2   | 3   | 4   | 5   | 6   | 7  |
+|:-- |:--- |:--- |:--- |:--- |:--- |:--- |:-- |
+| 1  | 1   | 0   | 1/2 | 1/2 | 1/2 | 0   | 0  |
+| 2  | 0   | 1   | 0   | 0   | 1/2 | 1/2 | 0  |
+| 3  | 1/2 | 0   | 1   | 1/4 | 1/4 | 0   | 0  |
+| 4  | 1/2 | 0   | 1/4 | 1   | 1/4 | 0   | 0  |
+| 5  | 1/2 | 1/2 | 1/4 | 1/4 | 1   | 1/4 | 0  |
+| 6  | 0   | 1/2 | 0   | 0   | 1/4 | 1   | 0  |
+| 7  | 0   | 0   | 0   | 0   | 0   | 0   | 1  |
 
 Hmm. All those numbers look suspiciously like a matrix. Why don't I put them
-into a matrix called _**A**_?
+into a matrix called ``A``?
 
 ```math
 \begin{bmatrix}
@@ -431,25 +428,25 @@ into a matrix called _**A**_?
 \end{bmatrix}
 ```
 
-Now I'm going to take the matrix with all of the _u_ values, and call it
-_**μ**_. To quantify the idea of genetic relationship, I will then say that
+Now I'm going to take the matrix with all of the ``u`` values, and call it
+``μ``. To quantify the idea of genetic relationship, I will then say that
 
 ```math
-\textup{var}(μ) = \mathbf{A}σ_μ^2
+\textup{var}(μ) = A σ_μ^2
 ```
 
 Where:
 
-- _**A**_ = the relationship matrix defined above
-- _σ<sub>μ</sub><sup>2</sup>_ = the standard deviation of all the genotypes
+- ``A`` = the relationship matrix defined above
+- ``σ_μ^2`` = the standard deviation of all the genotypes
 
 To fully constrain the system, I have to make two more assumptions: 1) that the
 error term in each animal's equation is independent from all other error terms,
 and 2) that the error term for each animal is independent from the value of the
-genotype. I will call the matrix holding the _e_ values _**ε**_ and then say
+genotype. I will call the matrix holding the ``e`` values ``ε`` and then say
 
 ```math
-\textup{var}(ϵ) = \mathbf{I}σ_ϵ^2
+\textup{var}(ϵ) = I σ_ϵ^2
 ```
 
 ```math
@@ -457,9 +454,6 @@ genotype. I will call the matrix holding the _e_ values _**ε**_ and then say
 ```
 
 Substituting in the matrix names, our equation now looks like
-
-![\Large Figure 25. Nearly complete mixed-model
-equation](https://latex.codecogs.com/svg.latex?%5Cinline%20%5Cbegin%7Bbmatrix%7D%20354%5Ctextup%7B%20kg%7D%5C%5C%20251%5Ctextup%7B%20kg%7D%5C%5C%20327%5Ctextup%7B%20kg%7D%5C%5C%20328%5Ctextup%7B%20kg%7D%5C%5C%20301%5Ctextup%7B%20kg%7D%5C%5C%20270%5Ctextup%7B%20kg%7D%5C%5C%20330%5Ctextup%7B%20kg%7D%20%5Cend%7Bbmatrix%7D%20%3D%20%5Cmu%20&plus;%20X%20%5Cbegin%7Bbmatrix%7D%20b_%7Bmean%7D%5C%5C%20b_%7B1990%7D%5C%5C%20b_%7B1991%7D%5C%5C%20b_%7Bfemale%7D%5C%5C%20%5Cend%7Bbmatrix%7D%20&plus;%20%5Cvarepsilon)
 
 ```math
 \begin{bmatrix}
@@ -484,14 +478,14 @@ b_{male} \\
 We are going to make three changes to this equation before we are ready to solve
 it, but they are cosmetic details for this example.
 
-1. Call the matrix on the left side of the equation _**Y**_ (sometimes it's
+1. Call the matrix on the left side of the equation ``Y`` (sometimes it's
    called the **matrix of observations**)
-2. Multiply _**μ**_ by an identity matrix called _**Z**_. Multiplying by the
+2. Multiply ``μ`` by an identity matrix called ``Z``. Multiplying by the
    identity matrix is the matrix form of multiplying by one, so nothing changes,
    but if we later want to find one animal's genetic effect on another animal's
-   performance (e.g. a **maternal effects model**), we can alter _**Z**_ to
-   allow that/
-3. Call the matrix with all the _b_ values _**β**_.
+   performance (e.g. a **maternal effects model**), we can alter ``Z`` to
+   allow that
+3. Call the matrix with all the ``b`` values ``β``.
 
 With all these changes, we now have
 
@@ -506,9 +500,6 @@ Charles Henderson used to first predict breeding values of livestock.
 
 Henderson proved that the mixed-model equation can be solved by the following:
 
-![\Large Figure 27. Solution to mixed-model
-equation](https://latex.codecogs.com/svg.latex?%5Cinline%20%5Cbegin%7Bbmatrix%7D%20%5Chat%7B%5Cbeta%7D%5C%5C%20%5Chat%7B%5Cmu%7D%20%5Cend%7Bbmatrix%7D%20%3D%5Cbegin%7Bbmatrix%7D%20X%27X%26X%27Z%5C%5C%20Z%27X%26Z%27Z&plus;A%5E%7B-1%7D%5Clambda%20%5Cend%7Bbmatrix%7D%5E%7B-1%7D%20%5Cbegin%7Bbmatrix%7D%20X%27Y%5C%5C%20Z%27Y%20%5Cend%7Bbmatrix%7D)
-
 ```math
 \begin{bmatrix}
 \hat{β} \\
@@ -517,7 +508,7 @@ equation](https://latex.codecogs.com/svg.latex?%5Cinline%20%5Cbegin%7Bbmatrix%7D
 =
 \begin{bmatrix}
 X'X & X'Z \\
-Z'X & Z'Z&plus;A^{-1}\lambda
+Z'X & Z'Z+A^{-1}λ
 \end{bmatrix}^{-1}
 \begin{bmatrix}
 X'Y \\
@@ -529,30 +520,23 @@ Where
 
 - The variables with hats are the statistical estimates of their mixed-model
   counterparts
-  - The predicted value of _**μ**_ is called the _Best Linear Unbiased
+  - The predicted value of ``μ`` is called the _Best Linear Unbiased
     Predictor_ or _BLUP_
-  - The estimated value of _**β**_ is called the _Best Linear Unbiased Estimate_
+  - The estimated value of ``β`` is called the _Best Linear Unbiased Estimate_
     or _BLUE_
 - ' is the transpose operator
-- λ is a single real number that is a function of the heritability for the trait
-  being predicted. It can be left out in many cases (λ = 1).
-  - λ = (1-h<sup>2</sup>)/h<sup>2</sup>
+- ``λ`` is a single real number that is a function of the heritability for the trait
+  being predicted. It can be left out in many cases (``λ = 1``).
+  - ``λ = \frac{1-h^2}{h^2}``
 
 What happened to
 
 ## Footnotes
 
-### a
+### Exception
 
 An animal **can** share its genome with itself by a factor of more than one:
 that's called inbreeding! We can account for this, and `beefblup` does as it
-calculates _**A**_. This is an area that actually merits a good deal of study:
+calculates ``A``. This is an area that actually merits a good deal of study:
 see chapter 2 of _Linear Models for the Prediction of Animal Breeding Values_ by
 Raphael A. Mrode (ISBN 978 1 78064 391 5).
-
-[BIF Guidelines]:
-https://beefimprovement.org/wp-content/uploads/2018/03/BIFGuidelinesFinal_updated0318.pdf
-[The Dot Product]:
-https://www.khanacademy.org/math/precalculus/x9e81a4f98389efdf:matrices/x9e81a4f98389efdf:multiplying-matrices-by-matrices/v/matrix-multiplication-intro
-[rank of _**X**_]: https://math.stackexchange.com/a/2080577 [Calvin already has
-an idea about that one]: https://www.gocomics.com/calvinandhobbes/1992/12/02

@@ -15,6 +15,8 @@ makedocs(;
     ),
     pages=[
         "Home" => "index.md",
+        "How to Calculate EPDs" => "how-to-calculate-epds.md",
+        "CLI Reference (WIP)" => "beefblup-cli.md"
     ],
 )
 
