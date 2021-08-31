@@ -58,6 +58,9 @@ function beefblup(path::String, savepath::String, h2::Float64)
     # Import data from a suitable spreadsheet
     data = DataFrame(CSV.File(path))
 
+    # Make sure the data is in the proper format
+    renamecolstospec!(data)
+
     # Sort the array by date
     sort!(data, :birthdate)
 
@@ -291,6 +294,24 @@ function additiverelationshipmatrix(id::AbstractVector, damid::AbstractVector, s
     end
 
     return A
+end
+
+"""
+    renamecolstospec(::DataFrame)
+
+Renames the first four columns of the beefblup data sheet so that they can be referred to by
+name instead of by column index, regardless of user input.
+"""
+function renamecolstospec!(df::DataFrame)
+    # Pull out the fixed-effect and observation name
+    othernames = propertynames(df)[5:end]
+
+    # Put specification column names and user-defined names together
+    allnames = cat([:id, :birthdate, :dam, :sire], othernames, dims=1)
+
+    # Rename in the DataFrame
+    rename!(df, allnames, makeunique=true)
+    return df
 end
 
 
