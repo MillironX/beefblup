@@ -195,6 +195,7 @@ function fixedeffectmatrix(fixedeffectdata::DataFrame)
             push!(fixedeffects, FixedEffect(name, traits))
         else
             @warn string("column '", name, "' does not have any unique animals and will be dropped from analysis")
+            pname = propertynames(fixedeffectdata)[i]
             DataFrames.select!(fixedeffectdata, Not(pname))
         end
     end
