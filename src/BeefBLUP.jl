@@ -95,13 +95,17 @@ function beefblup(path::String, savepath::String, h2::Float64)
 
     # Find the accuracies
     diaginv = diag(inv(MME))
-    reliability = ones(Float64, length(diaginv)) - diaginv .* λ
+    reliability = ones(Float64, length(diaginv)) .- diaginv .* λ
 
     # Find how many traits we found BLUE for
-    numgroups = numgroups .- 1
+    numgroups = length(reliability) - numanimals
+
+    # Split the BLUP and BLUE results
+    β = solutions[1:numgroups]
+    μ = solutions[numgroups+1:end]
+    μ_reliability = reliability[numgroups+1:end]
 
     # Extract the names of the traits
-    fixedfxnames = names(fixedfx)
     traitname = names(data)[end]
 
     # Start printing results to output
@@ -120,13 +124,15 @@ function beefblup(path::String, savepath::String, h2::Float64)
 
     # Print base population stats
     write(fileID, "Base Population:\n")
-    for i in 1:length(normal)
+    for i in 1:length(fixedeffects)
+        effect = fixedeffects[i]
         write(fileID, "\t")
-        write(fileID, fixedfxnames[i])
+        write(fileID, string(effect.name))
         write(fileID, ":\t")
-        write(fileID, normal[i])
+        write(fileID, string(effect.basetrait))
         write(fileID, "\n")
     end
+
     write(fileID, "\tMean ")
     write(fileID, traitname)
     write(fileID, ":\t")
@@ -136,17 +142,17 @@ function beefblup(path::String, savepath::String, h2::Float64)
     # Contemporary group adjustments
     counter = 2
     write(fileID, "Contemporary Group Effects:\n")
-    for i in 1:length(numgroups)
+    for i in 1:length(fixedeffects)
+        effect = fixedeffects[i]
         write(fileID, "\t")
-        write(fileID, fixedfxnames[i])
-        write(fileID, "\tEffect\tReliability\n")
-        for j in 1:numgroups[i]
+        write(fileID, effect.name)
+        write(fileID, "\tEffect\n")
+        for j in 1:length(effect.alltraits)
+            types = effect.alltraits[j]
             write(fileID, "\t")
-            write(fileID, adjustedtraits[counter - 1])
+            write(fileID, string(types))
             write(fileID, "\t")
-            write(fileID, string(solutions[counter]))
-            write(fileID, "\t")
-            write(fileID, string(reliability[counter]))
+            write(fileID, string(β[counter]))
             write(fileID, "\n")
 
             counter = counter + 1
@@ -162,9 +168,9 @@ function beefblup(path::String, savepath::String, h2::Float64)
         write(fileID, "\t")
         write(fileID, string(data.id[i]))
         write(fileID, "\t")
-        write(fileID, string(solutions[i + counter - 1]))
+        write(fileID, string(μ[i]))
         write(fileID, "\t")
-        write(fileID, string(reliability[i + counter - 1]))
+        write(fileID, string(μ_reliability[i]))
         write(fileID, "\n")
     end
 
