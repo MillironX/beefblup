@@ -71,9 +71,9 @@ function beefblup(path::String, savepath::String, h2::Float64)
     A = additiverelationshipmatrix(data.id, data.dam, data.sire)
 
     # Extract all of the fixed effects
-    fixedfx = select(data, Not([:id, :birthdate, :sire, :dam]))[:,1:end - 1]
+    fixedeffectdata = data[:,5:end-1]
 
-    (X, numgroups, normal, adjustedtraits) = fixedeffectmatrix(fixedfx)
+    (X, fixedeffects) = fixedeffectmatrix(fixedeffectdata)
 
     # Extract the observed data
     Y = convert(Array{Float64}, data[:,end])
@@ -173,71 +173,42 @@ function beefblup(path::String, savepath::String, h2::Float64)
 
 end
 
-function fixedeffectmatrix(fixedeffects::AbstractDataFrame)
-    # Find any columns that need to be deleted
-    for i in 1:ncol(fixedeffects)
-        if length(unique(fixedeffects[:,i])) <= 1
-            @warn string("column '", names(fixedeffects)[i], "' does not have any unique animals and will be removed from this analysis")
-            DataFrames.select!(fixedeffects, Not(i))
+"""
+    fixedeffectmatrix(fixedeffectdata::DataFrame)
+
+Creates contemporary groupings and the fixed-effect incidence matrix based on the fixed
+effects listed in `fixedeffectdata`.
+
+Returns a tuple `(X::Matrix{Int}, fixedeffects::Array{FixedEffect})` in which `X` is the
+actual matrix, and `fixedeffects` is the contemporary groupings.
+"""
+function fixedeffectmatrix(fixedeffectdata::DataFrame)
+    # Declare an empty return matrix
+    fixedeffects = FixedEffect[]
+
+    # Add each trait to the array
+    for i in 1:size(fixedeffectdata)[2]
+        name = names(fixedeffectdata)[i]
+        traits = eachcol(fixedeffectdata)[i]
+
+        if length(unique(traits)) > 1
+            push!(fixedeffects, FixedEffect(name, traits))
+        else
+            @warn string("column '", name, "' does not have any unique animals and will be dropped from analysis")
+            DataFrames.select!(fixedeffectdata, Not(pname))
         end
     end
 
-    # Determine how many contemporary groups there are
-    numtraits = ncol(fixedeffects)
-    numgroups = ones(1, numtraits)
-    for i in 1:numtraits
-        numgroups[i] = length(unique(fixedeffects[:,i]))
-    end
+    X = ones(Int64, (size(fixedeffectdata)[1], 1))
 
-    # If there are more groups than animals, then the analysis cannot continue
-    numanimals = length(fixedeffects[:,1])
-    if sum(numgroups) >= numanimals
-        throw(ErrorException("there are more contemporary groups than animals"))
-    end
-
-    # Define a "normal" animal as one of the last in the groups, provided that
-    # all traits do not have null values
-    numtraits = ncol(fixedeffects)
-    numanimals = length(fixedeffects[:,1])
-    normal = Array{String}(undef, 1, numtraits)
-    for i in 1:numtraits
-        for j in numanimals:-1:1
-            if !ismissing(fixedeffects[j,i])
-                normal[i] = string(fixedeffects[j,i])
-                break
-            end
+    for i in 1:length(fixedeffects)
+        trait = fixedeffects[i]
+        for phenotype in trait.alltraits
+            X = cat(X, Int64.(fixedeffectdata[:,i] .== phenotype), dims=2)
         end
     end
 
-    # Form the fixed-effect matrix
-    X = zeros(Int8, numanimals, floor(Int, sum(numgroups)) - length(numgroups) + 1)
-    X[:,1] = ones(Int8, 1, numanimals)
-
-    # Create an external counter that will increment through both loops
-    counter = 2
-
-    # Store the traits in a string array
-    adjustedtraits =
-    Array{String}(undef,floor(Int, sum(numgroups)) - length(numgroups))
-    # Iterate through each group
-    for i in 1:length(normal)
-        # Find the traits that are present in this trait
-        localdata = string.(fixedeffects[:,i])
-        traits = unique(localdata)
-        # Remove the normal version from the analysis
-        effecttraits = traits[findall(x -> x != normal[i], traits)]
-        # Iterate inside of the group
-        for j in 1:(length(effecttraits))
-            matchedindex = findall(x -> x == effecttraits[j], localdata)
-            X[matchedindex, counter] .= 1
-            # Add this trait to the string
-            adjustedtraits[counter - 1] = traits[j]
-            # Increment the big counter
-            counter = counter + 1
-        end
-    end
-
-    return X, numgroups, normal, adjustedtraits
+    return X, fixedeffects
 end
 
 """
@@ -312,6 +283,18 @@ function renamecolstospec!(df::DataFrame)
     # Rename in the DataFrame
     rename!(df, allnames, makeunique=true)
     return df
+end
+
+struct FixedEffect
+    name::String
+    basetrait::Any
+    alltraits::AbstractArray{Any}
+end
+
+function FixedEffect(name::String, incidences)
+    basetrait = last(unique(incidences))
+    types = unique(incidences)[1:end-1]
+    return FixedEffect(name, basetrait, types)
 end
 
 
